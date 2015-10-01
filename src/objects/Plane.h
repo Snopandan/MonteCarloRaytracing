@@ -14,8 +14,7 @@ public:
 
   Plane(const glm::vec3 upperLeftCorner, 
         const glm::vec3 lowerLeftCorner,
-        const glm::vec3 lowerRightCorner,
-        const glm::vec3 upperRightCorner);
+        const glm::vec3 lowerRightCorner);
 
   bool intersect(Ray* ray) override;
 
@@ -25,7 +24,6 @@ private:
   glm::vec3 upperLeftCorner_;
   glm::vec3 lowerLeftCorner_;
   glm::vec3 lowerRightCorner_;
-  glm::vec3 upperRightCorner_;
 
   glm::vec3 normal_;
 
