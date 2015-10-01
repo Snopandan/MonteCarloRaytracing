@@ -4,6 +4,8 @@
 #include <vector>
 #include <algorithm>
 
+#include "glm/glm.hpp"
+
 #include "objects/SceneObject.h"
 
 class Scene {
@@ -11,7 +13,7 @@ class Scene {
 public:
   void add(SceneObject* sceneObject);
 
-  bool intersect(Ray* ray);
+  bool intersect(Ray* ray, glm::vec3& intersection);
 
 protected:
 
