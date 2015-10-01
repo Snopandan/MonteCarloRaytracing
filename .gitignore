@@ -2,3 +2,5 @@ main
 *.d
 *.o
 *.png
+lib
+include
