@@ -15,7 +15,7 @@ else
 endif
 
 # Specify if you want to use gccfilter or not (YES or NO)
-GCCFILTER = NO
+GCCFILTER = YES
 
 # Specify include directories.
 INCDIR = -I"include" -I"src"
