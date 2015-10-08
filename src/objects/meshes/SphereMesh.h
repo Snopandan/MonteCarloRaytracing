@@ -20,6 +20,7 @@ public:
 private:
   const glm::vec3 position_;
   const float radius_;
+  const double radiusPow2_;
 };
 
 #endif

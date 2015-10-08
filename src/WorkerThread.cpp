@@ -42,7 +42,6 @@ void WorkerThread::run() {
 
     }
 
-    std::cout << "EXIT WORKER: " << id_ << std::endl;
   });
 
   workThread_.detach();
