@@ -52,11 +52,11 @@ bool TriangleMesh::triangleIntersection(const Ray* ray,
 
   const glm::vec3 D = ray->getDirection();
 
-  // Backface culling
-  const glm::vec3 N = glm::cross(e1, e2);
-  if( glm::dot(N, D) < 0 ) {
-    return false;
-  }
+  // // Backface culling
+  // const glm::vec3 N = glm::cross(e1, e2);
+  // if( glm::dot(N, D) < 0 ) {
+  //   return false;
+  // }
 
   // Begin calculating determinant - also used to calculate u parameter
   const glm::vec3 P = glm::cross(D, e2);
