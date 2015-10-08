@@ -35,6 +35,7 @@ glm::vec2 Camera::getPixelSize() const {
 
 std::vector<Ray*> Camera::getRays() const {
   std::vector<Ray*> rays;
+  rays.resize(pixelSize_.x * pixelSize_.y);
 
   for(int y=pixels_.y/2; y>-pixels_.y/2; y--) {
     for(int x=pixels_.x/2; x>-pixels_.x/2; x--) {

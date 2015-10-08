@@ -15,7 +15,7 @@ public:
   SphereMesh(glm::vec3 position, float radius);
   virtual ~SphereMesh();
 
-  virtual std::tuple<Mesh::Intersection, float, float> getIntersections(Ray ray);
+  virtual std::tuple<Mesh::Intersection, float, float> getIntersections(Ray* ray);
 
 private:
   glm::vec3 position_;

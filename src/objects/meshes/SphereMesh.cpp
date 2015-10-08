@@ -9,10 +9,10 @@ SphereMesh::~SphereMesh() {
 
 }
 
-std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(Ray ray) {
+std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(Ray* ray) {
     glm::vec3 c = position_;
-    glm::vec3 o = ray.getOrigin();
-    glm::vec3 d = ray.getDirection();
+    glm::vec3 o = ray->getOrigin();
+    glm::vec3 d = ray->getDirection();
 
     float denominator = glm::dot(d, d);
 
@@ -26,13 +26,13 @@ std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(Ray ra
       sMin = numeratorFirstPart / denominator;
 
       return std::make_tuple(Mesh::Intersection::SINGLE_HIT, sMin, sMax);
-    }else if(numeratorSecondPart > 0) {
+    } else if(numeratorSecondPart > 0) {
       sMin = (numeratorFirstPart - std::sqrt(numeratorSecondPart)) / denominator;
       sMax = (numeratorFirstPart + std::sqrt(numeratorSecondPart)) / denominator;
 
       if (sMax < 0) {
         return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMax, sMin);
-      }else {
+      } else {
         return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMin, sMax);
       }
     }
