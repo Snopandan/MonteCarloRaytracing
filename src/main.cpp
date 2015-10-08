@@ -115,8 +115,6 @@ int main(const int argc, const char* argv[]) {
 
   }
 
-  threadPool.dig();
-
   threadPool.wait();
 
   outputImage(file, image, width, height);

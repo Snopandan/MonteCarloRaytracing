@@ -4,11 +4,13 @@
 ThreadPool::ThreadPool(const unsigned int numberOfWorkers) 
 : numberOfWorkers_{numberOfWorkers}
 , workerThreadsCounter_{0}
-, dig_{false}
 , numberOfAddedWorkItems_{0}
 , numberOfFinishedWorkItems_{0}
 {
-
+  for(unsigned int i=0; i<numberOfWorkers_; i++) {
+    workThreads_.push_back(new WorkerThread{workerThreadsCounter_++, this});
+    workThreads_[i]->run();
+  }
 }
 
 
@@ -23,7 +25,6 @@ ThreadPool::~ThreadPool() {
 
 void ThreadPool::clearThreads() {
   setNumberOfWorkers(0);
-  dig_ = false;
 }
 
 
@@ -54,9 +55,7 @@ void ThreadPool::setNumberOfWorkers(const unsigned int numberOfWorkers) {
 
     for(unsigned int i=0; i<numberOfWorkersToAdd; i++) {
       workThreads_.push_back(new WorkerThread{workerThreadsCounter_++, this});
-      if( dig_ ) {
-        workThreads_[workThreads_.size()-1]->run();
-      }
+      workThreads_[workThreads_.size()-1]->run();
     }
   }
 
@@ -64,17 +63,6 @@ void ThreadPool::setNumberOfWorkers(const unsigned int numberOfWorkers) {
 
   for(unsigned int i=0; i<workThreads_.size(); i++) {
     workThreads_[i]->stop();
-  }
-
-}
-
-
-void ThreadPool::dig() {
-  dig_ = true;
-
-  for(unsigned int i=0; i<numberOfWorkers_; i++) {
-    workThreads_.push_back(new WorkerThread{workerThreadsCounter_++, this});
-    workThreads_[i]->run();
   }
 
 }

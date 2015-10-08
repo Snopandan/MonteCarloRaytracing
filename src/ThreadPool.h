@@ -22,8 +22,6 @@ public:
 
   ~ThreadPool();
 
-  void dig();
-
   void add(WorkItem* workItem);
 
   WorkItem* pop();
@@ -32,7 +30,7 @@ public:
 
   void clearWorkItems();
 
-  void setNumberOfWorkers(const unsigned int numberOfWorkers);
+  void setNumberOfWorkers(const unsigned int numberOfWorkers = std::thread::hardware_concurrency()-1);
 
   void wait();
 
@@ -41,8 +39,6 @@ public:
 protected:
 
 private:
-  bool dig_;
-
   unsigned int numberOfWorkers_;
   unsigned int workerThreadsCounter_;
 
