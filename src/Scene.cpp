@@ -1,16 +1,36 @@
 #include "Scene.h"
 
 
-void Scene::add(SceneObject* sceneObject) {
-  sceneObjects_.push_back(sceneObject);
+Scene::~Scene() {
+  for(unsigned int i=0; i<objects_.size(); i++) {
+    delete objects_[i];
+  }
 }
 
 
-bool Scene::intersect(Ray* ray, glm::vec3& intersection) {
-  for(auto& sceneObject: sceneObjects_) {
-    if( sceneObject->intersect(ray, intersection) ) {
-      return true;
+void Scene::add(Object* object) {
+  objects_.push_back(object);
+}
+
+
+std::pair<Object*, glm::vec3> Scene::intersect(Ray* ray) {
+  glm::vec3 origin = ray->getOrigin();
+
+  float nearestHitDistance{std::numeric_limits<float>::max()};
+
+  std::pair<Object*, glm::vec3> nearestHit{nullptr, glm::vec3{0}};
+
+  for(auto& sceneObject: objects_) {
+    std::pair<Object::Intersection, glm::vec3> intersection = sceneObject->intersect(*ray);
+    
+    if( intersection.first == Object::Intersection::HIT ) {
+      float distance = glm::distance(intersection.second, origin);
+      if( distance < nearestHitDistance ) {
+        nearestHit = std::pair<Object*, glm::vec3>{sceneObject, intersection.second};
+      }
     }
+
   }
-  return false;
+
+  return nearestHit;
 }

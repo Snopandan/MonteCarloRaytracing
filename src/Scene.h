@@ -3,22 +3,28 @@
 
 #include <vector>
 #include <algorithm>
+#include <tuple>
+#include <limits>
 
 #include "glm/glm.hpp"
 
-#include "objects/SceneObject.h"
+#include "objects/Object.h"
 
 class Scene {
 
 public:
-  void add(SceneObject* sceneObject);
+  Scene() = default;
 
-  bool intersect(Ray* ray, glm::vec3& intersection);
+  ~Scene();
+  
+  void add(Object* object);
+
+  std::pair<Object*, glm::vec3> intersect(Ray* ray);
 
 protected:
 
 private:
-  std::vector<SceneObject*> sceneObjects_;
+  std::vector<Object*> objects_;
 
 };
 

@@ -25,30 +25,31 @@ int main(const int argc, const char* argv[]) {
   std::vector<Ray*> rays = camera.getRays();
 
   Scene scene;
-  // scene.add(new Plane(glm::vec3(4, 3, 1.1f), glm::vec3(4, -3, 1.1f), glm::vec3(-4, -3, 1.1f)));
 
-  scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
-  // scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
-  // OpaqueObject object(new SphereMesh(glm::vec3(0, 0, 10), 3));
-  OpaqueObject object(new BoxMesh(glm::vec2{-1.5, 1.5}, glm::vec2{-1.5, 1.5}, glm::vec2{-5, 6}));
+  scene.add(new OpaqueObject{new BoxMesh{glm::vec2{-4, 4}, glm::vec2{-3, 3}, glm::vec2{-1.5, 1.5}}});
+
+  OpaqueObject object(new BoxMesh(glm::vec2{-4, 4}, glm::vec2{-3, 3}, glm::vec2{-1.5, 1.5}));
 
   unsigned int width = camera.getPixels().x;
   unsigned int height = camera.getPixels().y;
+  
   std::vector<unsigned char> image;
   image.resize(width * height * 4);
 
   for(unsigned int i=0;i<image.size(); i++) {
     image[i] = 0;
   }
+
   for(unsigned x = 0; x < width; x++) {
     for(unsigned y = 0; y < height; y++) {
-      // glm::vec3 intersection;
-      auto intersection = object.intersect(*rays[width * y + x]);
+
+      std::pair<Object*, glm::vec3> intersection = scene.intersect(rays[width * y + x]);
+
       int val = 0;
-      if (intersection.first == Object::Intersection::HIT){
+      if( intersection.first != nullptr ) {
         val = 255;
       }
-      // int val = scene.intersect(rays[width * y + x], intersection) ? 255 : 0;
+
       image[4 * width * y + 4 * x + 0] = 0;
       image[4 * width * y + 4 * x + 1] = val;
       image[4 * width * y + 4 * x + 2] = 0;
