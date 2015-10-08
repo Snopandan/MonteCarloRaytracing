@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <sstream>
 #include <chrono>
+#include <thread>
 
 #include "glm/glm.hpp"
 
@@ -15,6 +16,8 @@
 #include "objects/meshes/BoxMesh.h"
 #include "objects/OpaqueObject.h"
 
+#include "ThreadPool.h"
+#include "WorkItem.h"
 
 
 void outputImage(const std::string& file,
@@ -74,44 +77,57 @@ int main(const int argc, const char* argv[]) {
 
 
 
+  ThreadPool threadPool;
+
   std::vector<unsigned char> image;
   image.resize(width * height * 4);
   std::fill(image.begin(), image.end(), 0);
 
   for(unsigned x = 0; x < width; x++) {
-    for(unsigned y = 0; y < height; y++) {
 
-      std::pair<Object*, glm::vec3> intersection = scene.intersect(rays[width * y + x]);
+    WorkItem* workItem = new WorkItem([&, x](){
 
-      int green = 0;
-      int red = 0;
-      int blue = 0;
+      for(unsigned y = 0; y < height; y++) {
 
-      if( intersection.first == boundingBox ) {
-        green = 255;
-      } if( intersection.first == box1 ) {
-        red = 255;
-      } if( intersection.first == sphere1 ) {
-        blue = 255;
+        std::pair<Object*, glm::vec3> intersection = scene.intersect(rays[width * y + x]);
+
+        int green = 0;
+        int red = 0;
+        int blue = 0;
+
+        if( intersection.first == boundingBox ) {
+          green = 255;
+        } if( intersection.first == box1 ) {
+          red = 255;
+        } if( intersection.first == sphere1 ) {
+          blue = 255;
+        }
+
+        image[4 * width * y + 4 * x + 0] = red;
+        image[4 * width * y + 4 * x + 1] = green;
+        image[4 * width * y + 4 * x + 2] = blue;
+        image[4 * width * y + 4 * x + 3] = 255;
       }
 
-      image[4 * width * y + 4 * x + 0] = red;
-      image[4 * width * y + 4 * x + 1] = green;
-      image[4 * width * y + 4 * x + 2] = blue;
-      image[4 * width * y + 4 * x + 3] = 255;
+    });
 
-    }
+    threadPool.add(workItem);
+
   }
 
+  threadPool.dig();
 
+  threadPool.wait();
 
   outputImage(file, image, width, height);
+
 
 
 
   for(unsigned int i=0; i<rays.size(); i++) {
     delete rays[i];
   }
+
 
 
 
