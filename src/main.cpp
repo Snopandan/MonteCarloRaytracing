@@ -10,6 +10,8 @@
 #include "Scene.h"
 #include "objects/Plane.h"
 #include "Ray.h"
+#include "objects/meshes/SphereMesh.h"
+#include "objects/OpaqueObject.h"
 
 int main(const int argc, const char* argv[]) {
 
@@ -26,7 +28,7 @@ int main(const int argc, const char* argv[]) {
 
   scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
   // scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
-
+  OpaqueObject object(new SphereMesh(glm::vec3(0, 0, 10), 3));
 
   unsigned int width = camera.getPixels().x;
   unsigned int height = camera.getPixels().y;
@@ -38,15 +40,20 @@ int main(const int argc, const char* argv[]) {
   }
   for(unsigned x = 0; x < width; x++) {
     for(unsigned y = 0; y < height; y++) {
-      glm::vec3 intersection;
-      int val = scene.intersect(rays[width * y + x], intersection) ? 255 : 0;
+      // glm::vec3 intersection;
+      auto intersection = object.intersect(*rays[width * y + x]);
+      int val = 0;
+      if (intersection.first == Object::Intersection::HIT){
+        val = 255;
+      }
+      // int val = scene.intersect(rays[width * y + x], intersection) ? 255 : 0;
       image[4 * width * y + 4 * x + 0] = 0;
       image[4 * width * y + 4 * x + 1] = val;
       image[4 * width * y + 4 * x + 2] = 0;
       image[4 * width * y + 4 * x + 3] = 255;
     }
   }
-  
+
 
   unsigned error = lodepng::encode("test.png", image, width, height);
   if( error ) std::cout << "encoder error " << error << ": "<< lodepng_error_text(error) << std::endl;
