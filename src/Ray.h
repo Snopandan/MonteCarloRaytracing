@@ -16,8 +16,6 @@ public:
   glm::vec3 getDirection() const;
   glm::vec3 getInversedDirection() const;
 
-  bool triangleIntersection(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3& intersection) const;
-
 protected:
 
 private:

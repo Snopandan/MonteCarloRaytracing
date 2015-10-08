@@ -14,6 +14,7 @@
 #include "Ray.h"
 #include "objects/meshes/SphereMesh.h"
 #include "objects/meshes/BoxMesh.h"
+#include "objects/meshes/TriangleMesh.h"
 #include "objects/OpaqueObject.h"
 
 #include "ThreadPool.h"
@@ -74,6 +75,14 @@ int main(const int argc, const char* argv[]) {
   scene.add(sphere1);
 
 
+  std::vector<glm::vec3> verticies;
+  verticies.push_back(glm::vec3{-4, 0, 7});
+  verticies.push_back(glm::vec3{8, 0, 7});
+  verticies.push_back(glm::vec3{0, 9, 7});
+  OpaqueObject* triangle1 = new OpaqueObject{new TriangleMesh{verticies}};
+  scene.add(triangle1);
+
+
 
 
 
@@ -97,9 +106,13 @@ int main(const int argc, const char* argv[]) {
 
         if( intersection.first == boundingBox ) {
           green = 255;
-        } if( intersection.first == box1 ) {
+        } else if( intersection.first == box1 ) {
           red = 255;
-        } if( intersection.first == sphere1 ) {
+        } else if( intersection.first == sphere1 ) {
+          blue = 255;
+        } else if( intersection.first == triangle1 ) {
+          green = 255;
+          red = 255;
           blue = 255;
         }
 

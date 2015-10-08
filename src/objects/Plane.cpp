@@ -23,14 +23,10 @@ Plane::Plane(const glm::vec3 upperLeftCorner,
 #define EPSILON 0.000001
 
 bool Plane::intersect(Ray* ray, glm::vec3& intersection) {
-  // bool result = rayTriangleIntersection(upperLeftCorner_, lowerLeftCorner_, lowerRightCorner_, ray, intersection) ||
-  //               rayTriangleIntersection(lowerRightCorner_, upperRightCorner_, upperLeftCorner_, ray, intersection);
+  // bool result = ray->triangleIntersection(upperLeftCorner_, lowerLeftCorner_, lowerRightCorner_, intersection) ||
+  //               ray->triangleIntersection(lowerRightCorner_, upperRightCorner_, upperLeftCorner_, intersection);
 
-  bool result = ray->triangleIntersection(upperLeftCorner_, lowerLeftCorner_, lowerRightCorner_, intersection) ||
-                ray->triangleIntersection(lowerRightCorner_, upperRightCorner_, upperLeftCorner_, intersection);
-  // if( result ) {
-  //   std::cout << intersection.x << " " << intersection.y << " " << intersection.z << std::endl;
-  // }
+  bool result = false;
   return result;
 }
 
