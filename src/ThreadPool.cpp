@@ -59,11 +59,7 @@ void ThreadPool::setNumberOfWorkers(const unsigned int numberOfWorkers) {
     }
   }
 
-   numberOfWorkers_ = numberOfWorkers;
-
-  for(unsigned int i=0; i<workThreads_.size(); i++) {
-    workThreads_[i]->stop();
-  }
+  numberOfWorkers_ = numberOfWorkers;
 
 }
 
