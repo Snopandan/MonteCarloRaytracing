@@ -13,6 +13,7 @@
 #include "WorkItem.h"
 #include "WorkItemComparison.h"
 
+
 class WorkerThread;
 
 class ThreadPool {
@@ -47,12 +48,12 @@ private:
 
   std::mutex queueLock_;
   std::mutex numberLock_;
+
   std::priority_queue<WorkItem*, std::vector<WorkItem*>, WorkItemComparison> queue_;
 
   std::vector<WorkerThread*> workThreads_;
 
 };
-
 
 
 #endif // THREADPOOL_H

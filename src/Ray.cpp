@@ -18,6 +18,7 @@ glm::vec3 Ray::getDirection() const {
   return direction_;
 }
 
+
 glm::vec3 Ray::getInversedDirection() const {
   return inversedDirection_;
 }

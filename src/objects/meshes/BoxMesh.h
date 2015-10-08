@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 
+
 class BoxMesh : public Mesh {
 
 public:
@@ -22,5 +23,6 @@ private:
   const glm::vec2 zLimits_;
 
 };
+
 
 #endif // BOXMESH_H

@@ -12,8 +12,6 @@ BoxMesh::BoxMesh(const glm::vec2 xLimits, const glm::vec2 yLimits, const glm::ve
 
 std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray* ray) const {
 
-  // dmnsn_optimized_line optline, dmnsn_bounding_box box, double t
-
   const glm::vec3 origin = ray->getOrigin();
   const glm::vec3 inversedDirection = ray->getInversedDirection();
 
@@ -36,11 +34,7 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
   sMin = sMin > (tz1 < tz2 ? tz1 : tz2) ? sMin : (tz1 < tz2 ? tz1 : tz2);
   sMax = sMax < (tz1 > tz2 ? tz1 : tz2) ? sMax : (tz1 > tz2 ? tz1 : tz2);
 
-  const bool hit = sMax >= (0.0 > sMin ? 0.0 : sMin);// && sMin < t;
-
-  // if( hit ) {
-  //   return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMin, sMax);
-  // }
+  const bool hit = sMax >= (0.0 > sMin ? 0.0 : sMin);
 
   if( hit && sMin < 0 && sMax > 0) {
     // Innuti 
@@ -56,9 +50,5 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
     // Boxen bakom oss
     return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
   // }
-
-
-
-  // return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
 
 }

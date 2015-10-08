@@ -3,6 +3,7 @@
 
 #include <functional>
 
+
 class WorkItem {
 
 public:
@@ -19,5 +20,6 @@ private:
   const std::function<void()> work_;
 
 };
+
 
 #endif // WORKITEM_H

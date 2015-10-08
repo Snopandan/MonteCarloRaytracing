@@ -9,6 +9,7 @@
 #include "ThreadPool.h"
 #include "WorkItem.h"
 
+
 class ThreadPool;
 
 class WorkerThread {
@@ -29,5 +30,6 @@ private:
   std::thread workThread_;
 
 };
+
 
 #endif //WORKERTHREAD_H

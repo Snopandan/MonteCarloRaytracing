@@ -1,5 +1,5 @@
-#ifndef SPHERE_MESH
-#define SPHERE_MESH
+#ifndef SPHERE_MESH_H
+#define SPHERE_MESH_H
 
 #include <tuple>
 #include <cmath>
@@ -10,17 +10,21 @@
 #include "Mesh.h"
 #include "Ray.h"
 
-class SphereMesh : public Mesh{
+
+class SphereMesh : public Mesh {
+
 public:
   SphereMesh(const glm::vec3 position, const float radius);
-  virtual ~SphereMesh();
+  ~SphereMesh();
 
   std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
 
 private:
   const glm::vec3 position_;
   const float radius_;
-  const double radiusPow2_;
+  const float radiusPow2_;
+
 };
 
-#endif
+
+#endif // SPHERE_MESH_H
