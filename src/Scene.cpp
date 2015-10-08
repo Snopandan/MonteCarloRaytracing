@@ -6,9 +6,9 @@ void Scene::add(SceneObject* sceneObject) {
 }
 
 
-bool Scene::intersect(Ray* ray) {
+bool Scene::intersect(Ray* ray, glm::vec3& intersection) {
   for(auto& sceneObject: sceneObjects_) {
-    if( sceneObject->intersect(ray) ) {
+    if( sceneObject->intersect(ray, intersection) ) {
       return true;
     }
   }

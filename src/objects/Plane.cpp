@@ -9,10 +9,12 @@ Plane::Plane(const glm::vec3 upperLeftCorner,
 , lowerRightCorner_{lowerRightCorner}
 { 
 
-  glm::vec3 edge1 = glm::normalize(upperLeftCorner_ - lowerLeftCorner_);
-  glm::vec3 edge2 = glm::normalize(lowerRightCorner_ - lowerLeftCorner_); 
+  glm::vec3 edge1 = upperLeftCorner_ - lowerLeftCorner_;
+  glm::vec3 edge2 = lowerRightCorner_ - lowerLeftCorner_; 
 
   normal_ = glm::normalize(glm::cross(edge1, edge2));
+
+  upperRightCorner_ = lowerRightCorner_ + edge1;
 
 }
 
@@ -20,61 +22,16 @@ Plane::Plane(const glm::vec3 upperLeftCorner,
 
 #define EPSILON 0.000001
 
-bool Plane::intersect(Ray* ray) {
-  glm::vec3 V1 = upperLeftCorner_;
-  glm::vec3 V2 = lowerLeftCorner_;
-  glm::vec3 V3 = lowerRightCorner_;
-  glm::vec3 D = ray->getDirection();
-  glm::vec3 O = ray->getOrigin();
-  
-  float det, inv_det, u, v;
-  float t;
+bool Plane::intersect(Ray* ray, glm::vec3& intersection) {
+  // bool result = rayTriangleIntersection(upperLeftCorner_, lowerLeftCorner_, lowerRightCorner_, ray, intersection) ||
+  //               rayTriangleIntersection(lowerRightCorner_, upperRightCorner_, upperLeftCorner_, ray, intersection);
 
-  // Find vectors for two edges sharing V1
-  glm::vec3 e1 = V2 - V1;
-  glm::vec3 e2 = V3 - V1;
-
-  // Begin calculating determinant - also used to calculate u parameter
-  glm::vec3 P = glm::cross(D, e2);
-
-  // If determinant is near zero, ray lies in plane of triangle
-  det = glm::dot(e1, P);
-
-  // NOT CULLING
-  if(det > -EPSILON && det < EPSILON) {
-    return false;
-  }
-  inv_det = 1.0f / det;
-
-  // Calculate distance from V1 to ray origin
-  glm::vec3 T = O - V1;
-
-  // Calculate u parameter and test bound
-  u = glm::dot(T, P) * inv_det;
-
-  // The intersection lies outside of the triangle
-  if(u < 0.0f || u > 1.0f) {
-    return false;
-  }
-
-  // Prepare to test v parameter
-  glm::vec3 Q = glm::cross(T, e1);
-
-  // Calculate V parameter and test bound
-  v = glm::dot(D, Q) * inv_det;
-
-  // The intersection lies outside of the triangle
-  if(v < 0.0f || u + v  > 1.0f) {
-    return false;
-  }
-
-  t = glm::dot(e2, Q) * inv_det;
-
-  if(t > EPSILON) { //ray intersection
-    // *out = t;
-    return true;
-  }
-
-  return false;
+  bool result = ray->triangleIntersection(upperLeftCorner_, lowerLeftCorner_, lowerRightCorner_, intersection) ||
+                ray->triangleIntersection(lowerRightCorner_, upperRightCorner_, upperLeftCorner_, intersection);
+  // if( result ) {
+  //   std::cout << intersection.x << " " << intersection.y << " " << intersection.z << std::endl;
+  // }
+  return result;
 }
+
 
