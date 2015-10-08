@@ -2,10 +2,11 @@
 #define TRANSPARENT_OBJECT_H
 
 #include "Object.h"
+#include "meshes/Mesh.h"
 
 class TransparentObject : public Object{
 public:
-  TransparentObject();
+  TransparentObject(Mesh* mesh);
   virtual ~TransparentObject();
 
 private:

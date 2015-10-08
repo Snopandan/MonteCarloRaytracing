@@ -1,7 +1,7 @@
 #include "OpaqueObject.h"
 
-OpaqueObject::OpaqueObject()
-: Object(false) {
+OpaqueObject::OpaqueObject(Mesh* mesh)
+: Object(mesh, false) {
 
 }
 

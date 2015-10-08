@@ -1,7 +1,7 @@
 #include "TransparentObject.h"
 
-TransparentObject::TransparentObject()
-: Object(true) {
+TransparentObject::TransparentObject(Mesh* mesh)
+: Object(mesh, true) {
 
 }
 

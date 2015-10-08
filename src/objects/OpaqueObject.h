@@ -2,10 +2,11 @@
 #define OPAQUE_OBJECT_H
 
 #include "Object.h"
+#include "meshes/Mesh.h"
 
 class OpaqueObject : public Object{
 public:
-  OpaqueObject();
+  OpaqueObject(Mesh* mesh);
   virtual ~OpaqueObject();
 
 
