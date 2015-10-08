@@ -13,10 +13,10 @@
 
 int main(const int argc, const char* argv[]) {
 
-  Camera camera{glm::ivec2{800, 600},
-                glm::vec2{0.01f, 0.01f},
-                glm::vec3{0, 0, 0}, 
-                1};
+  Camera camera{glm::ivec2{800, 600},    // pixels
+                glm::vec2{0.01f, 0.01f}, // pixelSize
+                glm::vec3{0, 0, 0},      // position
+                1};                      // viewPlaneDistance
 
 
   std::vector<Ray*> rays = camera.getRays();
