@@ -12,15 +12,15 @@ SphereMesh::~SphereMesh() {
 }
 
 std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(const Ray* ray) const {
-    glm::vec3 c = position_;
-    glm::vec3 o = ray->getOrigin();
-    glm::vec3 d = ray->getDirection();
+    const glm::vec3 c = position_;
+    const glm::vec3 o = ray->getOrigin();
+    const glm::vec3 d = ray->getDirection();
 
-    float denominator = glm::dot(d, d);
+    const float denominator = glm::dot(d, d);
 
     glm::vec3 oMinusC = o - c;
-    float numeratorFirstPart = -1 * glm::dot(d, oMinusC);
-    float numeratorSecondPart = std::pow(glm::dot(oMinusC, d), 2) - glm::dot(d, d) * (glm::dot(oMinusC, oMinusC) - std::pow(radius_, 2));
+    const float numeratorFirstPart = -1 * glm::dot(d, oMinusC);
+    const float numeratorSecondPart = std::pow(glm::dot(oMinusC, d), 2) - glm::dot(d, d) * (glm::dot(oMinusC, oMinusC) - std::pow(radius_, 2));
     float sMin = 0;
     float sMax = 0;
 

@@ -30,10 +30,10 @@ public:
 protected:
 
 private:
-  glm::ivec2 pixels_;
-  glm::vec2 pixelSize_;
-  glm::vec3 position_;
-  float viewPlaneDistance_;
+  const glm::ivec2 pixels_;
+  const glm::vec2 pixelSize_;
+  const glm::vec3 position_;
+  const float viewPlaneDistance_;
 
 };
 
