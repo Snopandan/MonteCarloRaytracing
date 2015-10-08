@@ -1,7 +1,9 @@
 #include "SphereMesh.h"
 
-SphereMesh::SphereMesh(glm::vec3 position, float radius)
-: position_(position), radius_(radius) {
+SphereMesh::SphereMesh(const glm::vec3 position, const float radius)
+: position_(position)
+, radius_(radius) 
+{
 
 }
 
@@ -9,7 +11,7 @@ SphereMesh::~SphereMesh() {
 
 }
 
-std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(Ray* ray) {
+std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(const Ray* ray) const {
     glm::vec3 c = position_;
     glm::vec3 o = ray->getOrigin();
     glm::vec3 d = ray->getDirection();

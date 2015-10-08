@@ -10,12 +10,11 @@ BoxMesh::BoxMesh(const glm::vec2 xLimits, const glm::vec2 yLimits, const glm::ve
 }
 
 
-std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(Ray* ray) {
+std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray* ray) const {
 
   // dmnsn_optimized_line optline, dmnsn_bounding_box box, double t
 
   glm::vec3 origin = ray->getOrigin();
-  glm::vec3 direction = ray->getDirection();
   glm::vec3 inversedDirection = ray->getInversedDirection();
 
 

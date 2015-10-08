@@ -23,7 +23,7 @@ glm::vec3 Ray::getInversedDirection() const {
 }
 
 
-bool Ray::triangleIntersection(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3& intersection) {
+bool Ray::triangleIntersection(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3& intersection) const {
   glm::vec3 D = direction_;
   glm::vec3 O = origin_;
   

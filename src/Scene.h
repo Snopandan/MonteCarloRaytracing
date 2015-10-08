@@ -19,7 +19,7 @@ public:
   
   void add(Object* object);
 
-  std::pair<Object*, glm::vec3> intersect(Ray* ray);
+  std::pair<Object*, glm::vec3> intersect(const Ray* ray) const;
 
 protected:
 

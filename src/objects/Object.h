@@ -17,7 +17,7 @@ public:
 
   bool isTransparent() const { return isTransparent_; }
 
-  virtual std::pair<Object::Intersection, glm::vec3> intersect(Ray* ray) const;
+  virtual std::pair<Object::Intersection, glm::vec3> intersect(const Ray* ray) const;
 
 protected:
   Mesh* mesh_;

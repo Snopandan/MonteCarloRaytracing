@@ -12,14 +12,14 @@ class BoxMesh : public Mesh {
 public:
   BoxMesh(const glm::vec2 xLimits, const glm::vec2 yLimits, const glm::vec2 zLimits);
 
-  std::tuple<Mesh::Intersection, float, float> getIntersections(Ray* ray) override;
+  std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
 
 protected:
 
 private:
-  glm::vec2 xLimits_;
-  glm::vec2 yLimits_;
-  glm::vec2 zLimits_;
+  const glm::vec2 xLimits_;
+  const glm::vec2 yLimits_;
+  const glm::vec2 zLimits_;
 
 };
 

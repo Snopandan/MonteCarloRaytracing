@@ -9,7 +9,7 @@ Object::~Object() {
   delete mesh_;
 }
 
-std::pair <Object::Intersection, glm::vec3>  Object::intersect(Ray* ray) const {
+std::pair<Object::Intersection, glm::vec3> Object::intersect(const Ray* ray) const {
   std::tuple<Mesh::Intersection, float, float> intersections = mesh_->getIntersections(ray);
 
   if (std::get<0>(intersections) == Mesh::Intersection::MISS) {

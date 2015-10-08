@@ -12,14 +12,14 @@
 
 class SphereMesh : public Mesh{
 public:
-  SphereMesh(glm::vec3 position, float radius);
+  SphereMesh(const glm::vec3 position, const float radius);
   virtual ~SphereMesh();
 
-  virtual std::tuple<Mesh::Intersection, float, float> getIntersections(Ray* ray);
+  std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
 
 private:
-  glm::vec3 position_;
-  float radius_;
+  const glm::vec3 position_;
+  const float radius_;
 };
 
 #endif
