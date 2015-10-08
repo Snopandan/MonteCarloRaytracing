@@ -3,6 +3,7 @@
 Ray::Ray(const glm::vec3 origin, const glm::vec3 direction)
 : origin_{origin}
 , direction_{direction}
+, inversedDirection_{1.0 / direction.x, 1.0 / direction.y, 1.0 / direction.z}
 {
 
 }
@@ -15,6 +16,10 @@ glm::vec3 Ray::getOrigin() const {
 
 glm::vec3 Ray::getDirection() const {
   return direction_;
+}
+
+glm::vec3 Ray::getInversedDirection() const {
+  return inversedDirection_;
 }
 
 

@@ -11,6 +11,7 @@
 #include "objects/Plane.h"
 #include "Ray.h"
 #include "objects/meshes/SphereMesh.h"
+#include "objects/meshes/BoxMesh.h"
 #include "objects/OpaqueObject.h"
 
 int main(const int argc, const char* argv[]) {
@@ -28,7 +29,8 @@ int main(const int argc, const char* argv[]) {
 
   scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
   // scene.add(new Plane(glm::vec3(4, 3, 10), glm::vec3(4, -3, 10), glm::vec3(-4, -3, 10)));
-  OpaqueObject object(new SphereMesh(glm::vec3(0, 0, 10), 3));
+  // OpaqueObject object(new SphereMesh(glm::vec3(0, 0, 10), 3));
+  OpaqueObject object(new BoxMesh(glm::vec2{-1.5, 1.5}, glm::vec2{-1.5, 1.5}, glm::vec2{-5, 6}));
 
   unsigned int width = camera.getPixels().x;
   unsigned int height = camera.getPixels().y;
