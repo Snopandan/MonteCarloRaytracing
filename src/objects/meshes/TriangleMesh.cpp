@@ -46,12 +46,17 @@ bool TriangleMesh::triangleIntersection(const Ray* ray,
                                         const glm::vec3 v3, 
                                         glm::vec3& intersection) const {
 
-  const glm::vec3 O = ray->getOrigin();
-  const glm::vec3 D = ray->getDirection();
-  
   // Find vectors for two edges sharing v1
   const glm::vec3 e1 = v2 - v1;
   const glm::vec3 e2 = v3 - v1;
+
+  const glm::vec3 D = ray->getDirection();
+
+  // Backface culling
+  const glm::vec3 N = glm::cross(e1, e2);
+  if( glm::dot(N, D) < 0 ) {
+    return false;
+  }
 
   // Begin calculating determinant - also used to calculate u parameter
   const glm::vec3 P = glm::cross(D, e2);
@@ -63,10 +68,13 @@ bool TriangleMesh::triangleIntersection(const Ray* ray,
   if( det > -EPSILON && det < EPSILON ) {
     return false;
   }
-  const float inv_det = 1.0f / det;
+
+  const glm::vec3 O = ray->getOrigin();
 
   // Calculate distance from v1 to ray origin
-  glm::vec3 T = O - v1;
+  const glm::vec3 T = O - v1;
+
+  const float inv_det = 1.0f / det;
 
   // Calculate u parameter and test bound
   const float u = glm::dot(T, P) * inv_det;
@@ -77,7 +85,7 @@ bool TriangleMesh::triangleIntersection(const Ray* ray,
   }
 
   // Prepare to test v parameter
-  glm::vec3 Q = glm::cross(T, e1);
+  const glm::vec3 Q = glm::cross(T, e1);
 
   // Calculate V parameter and test bound
   const float v = glm::dot(D, Q) * inv_det;
