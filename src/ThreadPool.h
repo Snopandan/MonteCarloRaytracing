@@ -50,7 +50,7 @@ private:
   unsigned int numberOfFinishedWorkItems_;
 
   std::mutex queueLock_;
-  std::mutex finishedLock_;
+  std::mutex numberLock_;
   std::priority_queue<WorkItem*, std::vector<WorkItem*>, WorkItemComparison> queue_;
 
   std::vector<WorkerThread*> workThreads_;

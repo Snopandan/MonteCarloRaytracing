@@ -81,9 +81,13 @@ void ThreadPool::dig() {
 
 
 void ThreadPool::add(WorkItem* workItem) {
-  std::lock_guard<std::mutex> guardian(queueLock_);
-  queue_.push(workItem);
+  numberLock_.lock();
   numberOfAddedWorkItems_++;
+  numberLock_.unlock();
+
+  queueLock_.lock();
+  queue_.push(workItem);
+  queueLock_.unlock();
 }
 
 
@@ -99,22 +103,32 @@ WorkItem* ThreadPool::pop() {
 
 
 void ThreadPool::wait() {
-  bool wait = true;
-  while( wait ) {
-    finishedLock_.lock();
-    if( numberOfFinishedWorkItems_ == numberOfAddedWorkItems_ ) {
-      wait = false;
-    }
-    finishedLock_.unlock();
 
-    if( wait ) {
-      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+  while( true ) {
+
+    numberLock_.lock();
+    if( numberOfFinishedWorkItems_ == numberOfAddedWorkItems_ ) {
+      numberLock_.unlock();
+      return;
+    } 
+    numberLock_.unlock();
+
+    WorkItem* workItem = pop();
+
+    if( workItem != nullptr ) {
+      workItem->dig();
+      workerFinsihedJob();
+      delete workItem;
+    } else {
+      return;
     }
+
   }
-}
+
+} 
 
 
 void ThreadPool::workerFinsihedJob() {
-  std::lock_guard<std::mutex> guardian(finishedLock_);
+  std::lock_guard<std::mutex> guardian(numberLock_);
   numberOfFinishedWorkItems_++;
 }
