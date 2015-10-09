@@ -6,10 +6,9 @@
 
 #include "glm/glm.hpp"
 
-#include "SceneObject.h"
 #include "Ray.h"
 
-class Plane : public SceneObject {
+class Plane  {
 
 public: 
 
@@ -17,7 +16,7 @@ public:
         const glm::vec3 lowerLeftCorner,
         const glm::vec3 lowerRightCorner);
 
-  bool intersect(Ray* ray, glm::vec3& intersection) override;
+  bool intersect(Ray* ray, glm::vec3& intersection);
 
 protected:
 
