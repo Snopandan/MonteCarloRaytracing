@@ -17,8 +17,8 @@
 #include "objects/meshes/TriangleMesh.h"
 #include "objects/OpaqueObject.h"
 
-#include "ThreadPool.h"
-#include "WorkItem.h"
+#include "thread/ThreadPool.h"
+#include "thread/WorkItem.h"
 
 
 void outputImage(const std::string& file,
