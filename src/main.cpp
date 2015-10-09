@@ -15,6 +15,7 @@
 #include "objects/meshes/SphereMesh.h"
 #include "objects/meshes/BoxMesh.h"
 #include "objects/meshes/TriangleMesh.h"
+#include "objects/meshes/PlaneMesh.h"
 #include "objects/OpaqueObject.h"
 
 #include "thread/ThreadPool.h"
@@ -82,6 +83,9 @@ int main(const int argc, const char* argv[]) {
   OpaqueObject* triangle1 = new OpaqueObject{new TriangleMesh{verticies}};
   scene.add(triangle1);
 
+  OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 15, 5.5}, glm::vec3{-8, 15, 10}, glm::vec3{4, 15, 10} }};
+  scene.add(plane1);
+
 
 
 
@@ -114,6 +118,9 @@ int main(const int argc, const char* argv[]) {
           green = 255;
           red = 255;
           blue = 255;
+        } else if( intersection.first == plane1 ) {
+          green = 255;
+          red = 255;
         }
 
         image[4 * width * y + 4 * x + 0] = red;

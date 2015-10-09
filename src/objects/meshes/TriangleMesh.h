@@ -18,6 +18,8 @@ class TriangleMesh : public Mesh {
 public:
   TriangleMesh(const std::vector<glm::vec3> verticies);
 
+  virtual ~TriangleMesh() = default;
+
   std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
 
 protected:
