@@ -36,7 +36,9 @@ void WorkerThread::run() {
         } else {
           wait = true;
         } 
-      } 
+      } else {
+        return;
+      }
 
     }
 

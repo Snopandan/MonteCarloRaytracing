@@ -64,6 +64,11 @@ void ThreadPool::setNumberOfWorkers(const unsigned int numberOfWorkers) {
 }
 
 
+unsigned int ThreadPool::getNumberOfWorkers() const {
+  return numberOfWorkers_;
+}
+
+
 void ThreadPool::add(WorkItem* workItem) {
   numberLock_.lock();
   numberOfAddedWorkItems_++;

@@ -33,6 +33,8 @@ public:
 
   void setNumberOfWorkers(const unsigned int numberOfWorkers = std::thread::hardware_concurrency()-1);
 
+  unsigned int getNumberOfWorkers() const;
+
   void wait();
 
   void workerFinsihedJob();
