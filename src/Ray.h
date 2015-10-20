@@ -14,14 +14,14 @@ public:
 
   glm::vec3 getOrigin() const;
   glm::vec3 getDirection() const;
-
-  bool triangleIntersection(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3& intersection);
+  glm::vec3 getInversedDirection() const;
 
 protected:
 
 private:
-  glm::vec3 origin_;
-  glm::vec3 direction_;
+  const glm::vec3 origin_;
+  const glm::vec3 direction_;
+  const glm::vec3 inversedDirection_;
 
 };
 

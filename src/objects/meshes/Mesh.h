@@ -14,7 +14,7 @@ public:
   Mesh();
   virtual ~Mesh() = 0;
 
-  virtual std::tuple<Mesh::Intersection, float, float> getIntersections(Ray) = 0;
+  virtual std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const = 0;
 
 private:
 
