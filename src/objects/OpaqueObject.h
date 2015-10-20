@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include "meshes/Mesh.h"
+#include "brdfs/Brdf.h"
 
 class OpaqueObject : public Object{
 public:
@@ -11,6 +12,6 @@ public:
 
 
 private:
-
+  Brdf* brdf_;
 };
 #endif

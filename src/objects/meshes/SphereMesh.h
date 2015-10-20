@@ -1,5 +1,5 @@
-#ifndef SPHERE_MESH
-#define SPHERE_MESH
+#ifndef SPHERE_MESH_H
+#define SPHERE_MESH_H
 
 #include <tuple>
 #include <cmath>

@@ -31,7 +31,7 @@ std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(Ray ra
       sMax = (numeratorFirstPart + std::sqrt(numeratorSecondPart)) / denominator;
 
       if (sMax < 0) {
-        return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMax, sMin);
+        return std::make_tuple(Mesh::Intersection::MISS, sMax, sMin);
       }else {
         return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMin, sMax);
       }
