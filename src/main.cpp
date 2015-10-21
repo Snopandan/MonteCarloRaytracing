@@ -6,6 +6,7 @@
 #include <thread>
 #include <functional>
 #include <stdexcept>
+#include <cmath>
 
 #include "glm/glm.hpp"
 #include "glm/gtx/rotate_vector.hpp"
@@ -31,6 +32,7 @@
 
 #include "utils/Node.h"
 #include "utils/random.h"
+#include "utils/math.h"
 
 
 void outputImage(const std::string& file,
@@ -130,7 +132,7 @@ int main(const int argc, const char* argv[]) {
 
   // threadPool.setNumberOfWorkers(0);
 
-  // Construct Importance tree.
+  // Construct importance tree
   Node* importanceTree[width][height];
 
   for(unsigned x = 0; x < width; x++) {
@@ -152,6 +154,36 @@ int main(const int argc, const char* argv[]) {
           }
 
           if( intersection.first->isLight() ) {
+            const glm::vec3 origin = ray->getOrigin();
+            const glm::vec3 direction = ray->getDirection();
+            const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+
+            const glm::vec3 L = -direction;
+            const glm::vec3 N = normal;
+
+            const glm::vec3 view_direction = glm::normalize(origin);
+
+            const glm::vec3 V = -view_direction;
+            const glm::vec3 R = glm::reflect(L, N);
+
+            const float ka = 0.3f;
+            const float kd = 0.7f;
+            const float ks = 0.2f;
+
+            const glm::vec3 color = glm::vec3(0.5f, 0.5f, 0.5f); // TODO: Get from object
+            const glm::vec3 diffuseColor = color;
+            const glm::vec3 ambientColor = diffuseColor;
+            const glm::vec3 specularColor = glm::vec3(1.0f, 1.0f, 1.0f);
+
+            const float specularity = 5;
+
+            glm::vec3 frag_color;
+
+            frag_color = ka * ambientColor
+                       + kd * std::max(0.0f, glm::dot(L, N)) * diffuseColor
+                       + ks * std::pow(clamp(glm::dot(R, V), 0.0f, 1.0f), specularity) * specularColor;
+
+            // TODO: Do something with frag_color!
             node->setIntensity(intersection.first->getIntensity());
           }
 
@@ -226,6 +258,7 @@ int main(const int argc, const char* argv[]) {
 
 
 
+  // Compute pixels
   for(unsigned x = 0; x < width; x++) {
     WorkItem* workItem = new WorkItem([&, x]() {
 
