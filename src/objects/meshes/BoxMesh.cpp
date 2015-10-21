@@ -56,34 +56,34 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
 glm::vec3 BoxMesh::getNormal(const glm::vec3& position) const {
 
   // Bakom
-  if  ( position.x == xLimits_.x ) {
+  if( equalsEpsilon(position.x, xLimits_.x) ) {
     return glm::vec3(-1.0f, 0.0f, 0.0f);
   }
 
   // Framfor
-  if ( position.x == xLimits_.y ) {
+  if ( equalsEpsilon(position.x, xLimits_.y) ) {
     return glm::vec3(1.0f, 0.0f, 0.0f);
   }
 
   // Hoger
-  if ( position.y == yLimits_.x ) {
+  if( equalsEpsilon(position.y, yLimits_.x) ) {
     return glm::vec3(0.0f, -1.0f, 0.0f);
   }
 
   // Vänster
-  if ( position.y == yLimits_.y ) {
+  if( equalsEpsilon(position.y, yLimits_.y) ) {
     return glm::vec3(0.0f, 1.0f, 0.0f);
   }
 
   // Undre
-  if ( position.z == zLimits_.x ) {
+  if( equalsEpsilon(position.z, zLimits_.x) ) {
     return glm::vec3(0.0f, 0.0f, -1.0f);
   }
 
   // ÖVre
-  if ( position.z == zLimits_.y ) {
+  if( equalsEpsilon(position.z, zLimits_.y) ) {
     return glm::vec3(0.0f, 0.0f, 1.0f);
   }
 
-
+  throw std::invalid_argument{"The given position is not on the surface of the BoxMesh."};
 }

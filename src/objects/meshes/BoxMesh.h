@@ -2,10 +2,12 @@
 #define BOXMESH_H
 
 #include <algorithm>
+#include <stdexcept>
 
 #include "glm/glm.hpp"
 
 #include "Mesh.h"
+#include "utils/random.h"
 
 
 class BoxMesh : public Mesh {

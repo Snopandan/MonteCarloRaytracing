@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <stdexcept>
 
 #include "glm/glm.hpp"
 #include "glm/gtx/rotate_vector.hpp"
@@ -19,6 +20,7 @@
 #include "objects/meshes/BoundingBoxMesh.h"
 #include "objects/meshes/TriangleMesh.h"
 #include "objects/meshes/PlaneMesh.h"
+#include "objects/meshes/OrtPlaneMesh.h"
 #include "objects/OpaqueObject.h"
 #include "objects/TransparentObject.h"
 #include "objects/brdfs/BrdfLambertian.h"
@@ -62,7 +64,7 @@ int main(const int argc, const char* argv[]) {
                 glm::vec3{0, 0, 0},        // position
                 1};                        // viewPlaneDistance
 
-  std::vector<Ray*> rays = camera.getRays();
+  const std::vector<Ray*> rays = camera.getRays();
 
 
 
@@ -72,19 +74,22 @@ int main(const int argc, const char* argv[]) {
 
   OpaqueObject* boundingBox = new OpaqueObject{new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
     new BrdfLambertian{0.5f}};
-  // scene.add(boundingBox);
+  scene.add(boundingBox);
 
   // float box1XTrans = 2.5;
   // float box1YTrans = 0.0;
   // float box1Width = 0.9;
   // OpaqueObject* box1 = new OpaqueObject{new BoxMesh{glm::vec2{-box1Width, box1Width} + glm::vec2{box1XTrans, box1XTrans},
   //                                                   glm::vec2{-box1Width, box1Width} + glm::vec2{box1YTrans, box1YTrans},
-  //                                                   glm::vec2{1.1, 1.2}}};
+  //                                                   glm::vec2{1.1, 1.2}},
+  //                                       new BrdfLambertian{0.5f},
+  //                                       true,
+  //                                       glm::vec3{0.0f, 1.0f, 0.0f}};
   // scene.add(box1);
 
-  OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{0.0f, 0.0f, 0.0f}, 10.0f},
-    new BrdfLambertian{1.0f}};
-  scene.add(sphere1);
+  // OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{0.0f, 0.0f, 0.0f}, 10.0f},
+  //   new BrdfLambertian{1.0f}};
+  // scene.add(sphere1);
 
 
   // std::vector<glm::vec3> verticies;
@@ -93,39 +98,52 @@ int main(const int argc, const char* argv[]) {
   // verticies.push_back(glm::vec3{0, 9, 7});
   // OpaqueObject* triangle1 = new OpaqueObject{new TriangleMesh{verticies}};
   // scene.add(triangle1);
-  //
-  // OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 15, 5.5}, glm::vec3{-8, 15, 10}, glm::vec3{4, 15, 10} }};
-  // scene.add(plane1);
 
+  // OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 6, 5.5}, glm::vec3{-8, 6, 10}, glm::vec3{4, 6, 10} }};
+  // scene.add(plane1)threadPool; 
 
+  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{10, 10, 9},    // upperLeftCorner
+                                                           glm::vec3{-10, 1, 9},   // lowerLeftCorner 
+                                                           glm::vec3{-10, -1, 9}}, // lowerRightCorner
+                                          new BrdfLambertian{0.5f},
+                                          true,
+                                          glm::vec3{1.0f, 0.0f, 0.0f}};
+  scene.add(plane2);
 
-
-
+  scene.complete();
 
   std::vector<unsigned char> image;
   image.resize(width * height * 4);
   std::fill(image.begin(), image.end(), 0);
 
-  for(unsigned x = 0; x < width; x++) {
-      for(unsigned y = 0; y < height; y++) {
 
-        // std::cout << "x: " << x << std::endl;
-        // std::cout << "y: " << y << std::endl;
+  ThreadPool threadPool;
+
+  // threadPool.setNumberOfWorkers(0);
+
+  // Construct Importance tree.
+  Node* importanceTree[width][height];
+
+  for(unsigned x = 0; x < width; x++) {
+    WorkItem* workItem = new WorkItem([&importanceTree, &scene, &rays, x]() {
+
+      for(unsigned y = 0; y < height; y++) {
 
         const float rootImportance = 1.0f;
         Node* root = new Node{rays[width * y + x], rootImportance};
 
         std::function<void(Node*)> traverse = [&scene, &traverse](Node* node) {
-          Ray* ray = node->getRay();
-          std::pair<Object*, glm::vec3> intersection = scene.intersect(ray);
-          if( intersection.first == nullptr) {
-            glm::vec3 direction = ray->getDirection();
-            glm::vec3 origin = ray->getOrigin();
-            std::cout << "Hej origin: " << origin.x << " " << origin.y << " " << origin.z << std::endl;
-            std::cout << "Hej direction: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
-            int a;
-            std::cin >> a;
+          const Ray* ray = node->getRay();
+          const std::pair<Object*, glm::vec3> intersection = scene.intersect(ray);
 
+          if( intersection.first == nullptr) {
+            const glm::vec3 direction = ray->getDirection();
+            const glm::vec3 origin = ray->getOrigin();
+            throw std::invalid_argument{"No intersection found."};
+          }
+
+          if( intersection.first->isLight() ) {
+            node->setIntensity(intersection.first->getIntensity());
           }
 
           if( intersection.first != nullptr && !intersection.first->isLight() ) {
@@ -138,8 +156,11 @@ int main(const int argc, const char* argv[]) {
               const float importance = node->getImportance();
               const float transparency = dynamic_cast<TransparentObject*>(intersection.first)->getTransparancy();
 
-              node->setReflected(new Node{new Ray{intersection.second, reflection}, importance * (1 - transparency)});
-              node->setRefracted(new Node{new Ray{intersection.second, refraction}, importance * transparency});
+              const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
+              const glm::vec3 newRefractedOrigin = intersection.second - normal * getEpsilon() + direction * getEpsilon();
+
+              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1 - transparency)});
+              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency});
 
               traverse(node->getReflected());
               traverse(node->getRefracted());
@@ -149,56 +170,14 @@ int main(const int argc, const char* argv[]) {
 
               if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) ) {
                 const glm::vec3 normal = intersection.first->getNormal(intersection.second);
-                glm::vec3 direction = ray->getDirection();
-                const glm::vec3 trueDir = direction;
+                const glm::vec3 direction = ray->getDirection();
 
                 const glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
-                glm::mat4 rotation = glm::orientation(normal, up);
+                const glm::mat4 rotation = glm::orientation(normal, up);
 
-                glm::vec3 testNormal = glm::vec3{0.0f, 0.0f, 1.0f};
+                const glm::vec4 hemisphereIncomingDirectionFlipped = -(rotation * glm::vec4(direction.x, direction.y, direction.z, 1.0f));
 
-                const glm::vec4 testNormalRotated = (rotation * glm::vec4(testNormal.x, testNormal.y, testNormal.z, 1.0f));
-                testNormal = glm::vec3(testNormalRotated.x, testNormalRotated.y, testNormalRotated.z);
-
-                // std::cout << "testNormal: " << testNormal.x << " " << testNormal.y << " " << testNormal.z << std::endl;
-
-                const glm::vec4 directionRotated = (rotation * glm::vec4(direction.x, direction.y, direction.z, 1.0f));
-                direction = - glm::vec3(directionRotated.x, directionRotated.y, directionRotated.z);
-
-
-                const glm::vec2 normalAngles = {std::acos(normal.z), std::atan2(normal.y, normal.x)};
-                const glm::vec2 directionAngles = {std::acos(direction.z), std::atan2(direction.y, direction.x)};
-
-                // std::cout << "Normal: " << normal.x << " " << normal.y << " " << normal.z << std::endl;
-                // glm::vec3 vec1{1.0f, 0.0f, 0.0f};
-                // glm::vec3 vec2{-1.0f, 0.0f, 0.0f};
-                // glm::vec3 vec3{0.0f, 1.0f, 0.0f};
-                // glm::vec3 vec4{0.0f, -1.0f, 0.0f};
-                // glm::vec3 vec5{0.0f, 0.0f, 1.0f};
-                // glm::vec3 vec6{0.0f, 0.0f, -1.0f};
-                // glm::vec2 angles1 = {std::acos(vec1.z), std::atan2(vec1.y, vec1.x)};
-                // glm::vec2 angles2 = {std::acos(vec2.z), std::atan2(vec2.y, vec2.x)};
-                // glm::vec2 angles3 = {std::acos(vec3.z), std::atan2(vec3.y, vec3.x)};
-                // glm::vec2 angles4 = {std::acos(vec4.z), std::atan2(vec4.y, vec4.x)};
-                // glm::vec2 angles5 = {std::acos(vec5.z), std::atan2(vec5.y, vec5.x)};
-                // glm::vec2 angles6 = {std::acos(vec6.z), std::atan2(vec6.y, vec6.x)};
-
-
-
-                // std::cout << "angles1: " << angles1.x*(180.0f / M_PI) << " " << angles1.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "angles2: " << angles2.x*(180.0f / M_PI) << " " << angles2.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "angles3: " << angles3.x*(180.0f / M_PI) << " " << angles3.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "angles4: " << angles4.x*(180.0f / M_PI) << " " << angles4.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "angles5: " << angles5.x*(180.0f / M_PI) << " " << angles5.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "angles6: " << angles6.x*(180.0f / M_PI) << " " << angles6.y*(180.0f / M_PI) << std::endl;
-
-                glm::vec3 randomVector{std::sin(randomAngles.y)*std::cos(randomAngles.x),
-                                       std::sin(randomAngles.y)*std::sin(randomAngles.x),
-                                       std::cos(randomAngles.y)};
-
-                const glm::vec4 randomVectorRotated = (rotation * glm::vec4(randomVector.x, randomVector.y, randomVector.z, 1.0f));
-                randomVector = glm::normalize(glm::vec3(randomVectorRotated.x, randomVectorRotated.y, randomVectorRotated.z));
-                const glm::vec2 randomAngles2 = {std::acos(randomVector.z), std::atan2(randomVector.y, randomVector.x)};
+                const glm::vec2 directionAngles = {std::acos(hemisphereIncomingDirectionFlipped.z), std::atan2(hemisphereIncomingDirectionFlipped.y, hemisphereIncomingDirectionFlipped.x)};
 
                 const glm::vec2 incomingAngles = directionAngles;
                 const glm::vec2 outgoingAngles = randomAngles;
@@ -206,14 +185,7 @@ int main(const int argc, const char* argv[]) {
                 assert( randomAngles.x >= 0.0f && randomAngles.x <= 2.0 * M_PI );
                 assert( randomAngles.y >= 0.0f && randomAngles.y <= M_PI / 2.0 );
 
-                // std::cout << "normalAngles: " << normalAngles.x*(180.0f / M_PI) << " " << normalAngles.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "randomAngles: " << randomAngles.x*(180.0f / M_PI) << " " << randomAngles.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "directionAngles: " << directionAngles.x*(180.0f / M_PI) << " " << directionAngles.y*(180.0f / M_PI) << std::endl;
-
-                // std::cout << "incomingAngles: " << incomingAngles.x*(180.0f / M_PI) << " " << incomingAngles.y*(180.0f / M_PI) << std::endl;
-                // std::cout << "outgoingAngles: " << outgoingAngles.x*(180.0f / M_PI) << " " << outgoingAngles.y*(180.0f / M_PI) << std::endl;
-
-                glm::vec3 reflection{std::sin(outgoingAngles.y)*std::cos(outgoingAngles.x),
+                const glm::vec3 reflection{std::sin(outgoingAngles.y)*std::cos(outgoingAngles.x),
                                            std::sin(outgoingAngles.y)*std::sin(outgoingAngles.x),
                                            std::cos(outgoingAngles.y)};
 
@@ -221,23 +193,11 @@ int main(const int argc, const char* argv[]) {
 
                 const float brdf = dynamic_cast<OpaqueObject*>(intersection.first)->computeBrdf(intersection.second, incomingAngles, outgoingAngles);
 
-                // Node* neWNoe = new Node{new Ray{intersection.second, reflection}, importance * brdf};
+                const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
 
-                const glm::vec3 newOrigin = intersection.second /*- glm::vec3(trueDir.x*0.01f, trueDir.y*0.01f, trueDir.z*0.01f) */
+                node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf});
 
-                      + glm::vec3(normal.x*0.0001f, normal.y*0.0001f, normal.z*0.0001f);
-
-                // std::cout << "newOrigin: " << newOrigin.x << " " << newOrigin.y << " " << newOrigin.z << std::endl;
-                // std::cout << "newDirection: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
-
-                node->setReflected(new Node{new Ray{newOrigin, reflection}, importance * brdf});
-                // node->setReflected(new Node{new Ray{glm::vec3(9.999999f,0.0,0.0f), glm::vec3(-1.0f,0.0f,0.0f)}, importance * brdf});
-                // node->setReflected(new Node{new Ray{intersection.second + normal * 0.00001f, glm::vec3(-1.0f,0.0f,0.0f)}, importance * brdf});
-                // std::cout << "Origin: " << intersection.second.x << " " << intersection.second.y << " " << intersection.second.z << std::endl;
-                // std::cout << "Outgoing direction: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
-                // int a;
-                // std::cin >> a;
-
+                node->addIntensity(scene.castShadowRays(ray->getOrigin(), 3));
                 traverse(node->getReflected());
               }
             }
@@ -245,37 +205,69 @@ int main(const int argc, const char* argv[]) {
 
         };
 
+        importanceTree[x][y] = root;
         traverse(root);
+      }
+
+    });
+    threadPool.add(workItem);
+  }
+  threadPool.wait();
 
 
 
-        int red = 0;
-        int green = 0;
-        int blue = 0;
+  for(unsigned x = 0; x < width; x++) {
+    WorkItem* workItem = new WorkItem([&, x]() {
+
+      for(unsigned y = 0; y < height; y++) {
+
+        std::function<void(Node*)> traverse = [&scene, &traverse](Node* node) {
+          Node* reflected = node->getReflected();
+          Node* refracted = node->getRefracted();
+
+          if( reflected != nullptr ) {
+            traverse(reflected);
+            node->addIntensity(node->getImportance() * reflected->getIntensity());
+          }
+
+          if( refracted != nullptr ) {
+            traverse(refracted);
+            node->addIntensity(node->getImportance() * refracted->getIntensity());
+          }
+
+        };
+
+        traverse(importanceTree[x][y]);
+
+        const glm::vec3 color = importanceTree[x][y]->getIntensity();
+        // std::cout << "Color: " << color.r << " " << color.g << " " << color.b << std::endl;
+        // std::string line;
+        // std::getline(std::cin, line);
+
+        int red = color.r * 100;
+        int green = color.g * 100;
+        int blue = color.b * 100;
         int alpha = 255;
-
-        // if( x == 0 && y == 0) green = 255;
-        // red = ((float)y / 600.0f) * 255;
-
 
         image[4 * width * y + 4 * x + 0] = red;
         image[4 * width * y + 4 * x + 1] = green;
         image[4 * width * y + 4 * x + 2] = blue;
         image[4 * width * y + 4 * x + 3] = alpha;
-    }
+
+      }
+
+    });
+    threadPool.add(workItem);
   }
+  threadPool.wait();
+
 
 
   outputImage(file, image, width, height);
 
 
 
-
-  for(unsigned int i=0; i<rays.size(); i++) {
-    delete rays[i];
-  }
-
-
+  // CLEANUP! Rays?, ImportanceTree?, Scene?
 
 
   auto endTime = std::chrono::high_resolution_clock::now();

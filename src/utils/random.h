@@ -31,5 +31,15 @@ inline bool shouldTerminateRay(const float phi, const float probabilityNotToTerm
 }
 
 
+inline float getEpsilon() {
+  return 0.0001f;
+}
+
+inline bool equalsEpsilon(const float f1, const float f2) {
+  // static float epsilon = 0.00001f;
+  // return  f1 == f2;
+  return ((f2 - getEpsilon()) <= f1) && (f1 <= (f2 + getEpsilon()));
+}
+
 
 #endif
