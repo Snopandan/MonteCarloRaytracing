@@ -72,7 +72,7 @@ int main(const int argc, const char* argv[]) {
 
   OpaqueObject* boundingBox = new OpaqueObject{new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
     new BrdfLambertian{0.5f}};
-  scene.add(boundingBox);
+  // scene.add(boundingBox);
 
   // float box1XTrans = 2.5;
   // float box1YTrans = 0.0;
@@ -82,9 +82,9 @@ int main(const int argc, const char* argv[]) {
   //                                                   glm::vec2{1.1, 1.2}}};
   // scene.add(box1);
 
-  OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{-8, 0, 5}, 3},
+  OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{0.0f, 0.0f, 0.0f}, 10.0f},
     new BrdfLambertian{1.0f}};
-  // scene.add(sphere1);
+  scene.add(sphere1);
 
 
   // std::vector<glm::vec3> verticies;
@@ -227,8 +227,8 @@ int main(const int argc, const char* argv[]) {
 
                       + glm::vec3(normal.x*0.0001f, normal.y*0.0001f, normal.z*0.0001f);
 
-                std::cout << "newOrigin: " << newOrigin.x << " " << newOrigin.y << " " << newOrigin.z << std::endl;
-                std::cout << "newDirection: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
+                // std::cout << "newOrigin: " << newOrigin.x << " " << newOrigin.y << " " << newOrigin.z << std::endl;
+                // std::cout << "newDirection: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
 
                 node->setReflected(new Node{new Ray{newOrigin, reflection}, importance * brdf});
                 // node->setReflected(new Node{new Ray{glm::vec3(9.999999f,0.0,0.0f), glm::vec3(-1.0f,0.0f,0.0f)}, importance * brdf});
@@ -253,7 +253,7 @@ int main(const int argc, const char* argv[]) {
         int green = 0;
         int blue = 0;
         int alpha = 255;
- 
+
         // if( x == 0 && y == 0) green = 255;
         // red = ((float)y / 600.0f) * 255;
 

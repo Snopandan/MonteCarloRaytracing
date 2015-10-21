@@ -12,7 +12,7 @@ class BoundingBoxMesh : public BoxMesh {
 public:
   using BoxMesh::BoxMesh;
 
-  glm::vec3 getNormal(const glm::vec3& position) const override;
+  virtual glm::vec3 getNormal(const glm::vec3& position) const override;
 };
 
 

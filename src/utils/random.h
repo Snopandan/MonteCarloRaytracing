@@ -17,6 +17,9 @@ inline glm::vec2 getRandomAngles() {
   float r1 = random0To1();
   float r2 = random0To1();
 
+  // std::cout << "R1: " << r1 << std::endl;
+  // std::cout << "R2: " << r2 << std::endl;
+
   float phi = 2 * M_PI * r1;
   float theta = std::acos(std::sqrt(r2));
 
