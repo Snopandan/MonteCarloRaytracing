@@ -102,13 +102,22 @@ int main(const int argc, const char* argv[]) {
   // OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 6, 5.5}, glm::vec3{-8, 6, 10}, glm::vec3{4, 6, 10} }};
   // scene.add(plane1)threadPool; 
 
-  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{10, 10, 9},    // upperLeftCorner
-                                                           glm::vec3{-10, 1, 9},   // lowerLeftCorner 
-                                                           glm::vec3{-10, -1, 9}}, // lowerRightCorner
+  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{5, 0, 4.5f},    // upperLeftCorner
+                                                           glm::vec3{5, 1, 4.5f},   // lowerLeftCorner 
+                                                           glm::vec3{-5, 1, 4.5f}}, // lowerRightCorner
                                           new BrdfLambertian{0.5f},
                                           true,
                                           glm::vec3{1.0f, 0.0f, 0.0f}};
   scene.add(plane2);
+
+  OpaqueObject* plane3 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{9, 2, 4 },    // upperLeftCorner
+                                                           glm::vec3{9, 0, 4},   // lowerLeftCorner 
+                                                           glm::vec3{9, 0, 6}}, // lowerRightCorner
+                                          new BrdfLambertian{0.5f},
+                                          true,
+                                          glm::vec3{0.0f, 0.0f, 1.0f}};
+  scene.add(plane3);
+
 
   scene.complete();
 
@@ -132,7 +141,7 @@ int main(const int argc, const char* argv[]) {
         const float rootImportance = 1.0f;
         Node* root = new Node{rays[width * y + x], rootImportance};
 
-        std::function<void(Node*)> traverse = [&scene, &traverse](Node* node) {
+        std::function<void(Node*)> traverse = [&scene, &traverse, &root](Node* node) {
           const Ray* ray = node->getRay();
           const std::pair<Object*, glm::vec3> intersection = scene.intersect(ray);
 
@@ -168,7 +177,7 @@ int main(const int argc, const char* argv[]) {
               const glm::vec2 randomAngles = getRandomAngles();
               const float probabilityNotToTerminateRay = 0.5;
 
-              if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) ) {
+              if( node == root  || !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) ) {
                 const glm::vec3 normal = intersection.first->getNormal(intersection.second);
                 const glm::vec3 direction = ray->getDirection();
 
@@ -197,7 +206,8 @@ int main(const int argc, const char* argv[]) {
 
                 node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf});
 
-                node->addIntensity(scene.castShadowRays(ray->getOrigin(), 3));
+                node->addIntensity(importance * scene.castShadowRays(newReflectedOrigin, 1));
+
                 traverse(node->getReflected());
               }
             }

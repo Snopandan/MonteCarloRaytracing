@@ -43,9 +43,9 @@ std::tuple<Mesh::Intersection, float, float> OrtPlaneMesh::getIntersections(cons
   //   return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
   // }
    
-  // if( glm::dot(normal_, direction) <= getEpsilon() ) { // Backface culling
-  //   return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
-  // }
+  if( glm::dot(normal_, -direction) <= getEpsilon() ) { // Backface culling
+    return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
+  }
 
   // const glm::vec3 p0 = origin;
   // const glm::vec3 p1 = origin + direction;

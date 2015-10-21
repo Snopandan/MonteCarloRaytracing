@@ -34,6 +34,10 @@ void Scene::complete() {
       opaqueObjects_.push_back(object);
     }
   }
+
+  if( lightObjects_.empty() ) {
+    throw std::invalid_argument{"The scene is missing a light source."};
+  }
 }
 
 
@@ -74,6 +78,7 @@ glm::vec3 Scene::castShadowRays(const glm::vec3& origin, const unsigned int numb
     const std::pair<Object*, glm::vec3> lightIntersection = intersectImpl(ray, opaqueObjects_);
     if( lightIntersection.first == lightObjects_[light] ) {
       intensity += lightObjects_[light]->getIntensity();
+      // intensity += glm::vec3(0, 1, 0);
     }
     delete ray;
   }

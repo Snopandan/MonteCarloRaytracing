@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 #include <tuple>
 #include <limits>
+#include <stdexcept>
 
 #include "glm/glm.hpp"
 
