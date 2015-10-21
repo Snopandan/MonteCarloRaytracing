@@ -10,12 +10,12 @@ float clamp(float value, float min, float max) {
 }
 
 float cos2Theta(const Ray& ray) {
-  glm::vec3 vector = ray.getDirection();
+  glm::vec3 vector = ray.getAsVector();
   return vector.z * vector.z;
 }
 
 float cosTheta(const Ray& ray) {
-  glm::vec3 vector = ray.getDirection();
+  glm::vec3 vector = ray.getAsVector();
   return vector.z;
 }
 
@@ -27,23 +27,23 @@ float sinTheta(const Ray& ray) {
 }
 
 float sinPhi(const Ray& ray) {
-  glm::vec3 vector = ray.getDirection();
-  float sinTheta = SinTheta(ray);
-  return (sinTheta == 0.0f) ? 0.0f : clamp(vector.y / sinTheta, -1.0f, 1.0f);
+  glm::vec3 vector = ray.getAsVector();
+  float sTheta = sinTheta(ray);
+  return (sTheta == 0.0f) ? 0.0f : clamp(vector.y / sTheta, -1.0f, 1.0f);
 }
 
 float sin2Phi(const Ray& ray) {
   return sinPhi(ray) * sinPhi(ray);
 }
 
-float cos2Phi(const Ray& ray) {
-  return cosPhi(ray) * cosPhi(ray);
+float cosPhi(const Ray& ray) {
+  glm::vec3 vector = ray.getAsVector();
+  float sTheta = sinTheta(ray);
+  return (sTheta == 0.0f) ? 1.0f : clamp(vector.x / sTheta, -1.0f, 1.0f);
 }
 
-float cosPhi(const Ray& ray) {
-  glm::vec3 vector = ray.getDirection();
-  float sinTheta = sinTheta(ray);
-  return (sinTheta == 0.0f) ? 1.0f : clamp(vector.x / sinTheta, -1.0f, 1.0f);
+float cos2Phi(const Ray& ray) {
+  return cosPhi(ray) * cosPhi(ray);
 }
 
 #endif
