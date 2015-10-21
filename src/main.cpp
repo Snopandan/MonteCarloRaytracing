@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "glm/glm.hpp"
+#include "glm/gtx/rotate_vector.hpp"
 
 #include "utils/lodepng.h"
 
@@ -108,6 +109,9 @@ int main(const int argc, const char* argv[]) {
   for(unsigned x = 0; x < width; x++) {
       for(unsigned y = 0; y < height; y++) {
 
+        // std::cout << "x: " << x << std::endl;
+        // std::cout << "y: " << y << std::endl;
+
         const float rootImportance = 1.0f;
         Node* root = new Node{rays[width * y + x], rootImportance};
 
@@ -115,7 +119,13 @@ int main(const int argc, const char* argv[]) {
           Ray* ray = node->getRay();
           std::pair<Object*, glm::vec3> intersection = scene.intersect(ray);
           if( intersection.first == nullptr) {
-            std::cout << "hej" << std::endl;
+            glm::vec3 direction = ray->getDirection();
+            glm::vec3 origin = ray->getOrigin();
+            std::cout << "Hej origin: " << origin.x << " " << origin.y << " " << origin.z << std::endl;
+            std::cout << "Hej direction: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
+            int a;
+            std::cin >> a;
+
           }
 
           if( intersection.first != nullptr && !intersection.first->isLight() ) {
@@ -139,24 +149,41 @@ int main(const int argc, const char* argv[]) {
 
               if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) ) {
                 const glm::vec3 normal = intersection.first->getNormal(intersection.second);
-                const glm::vec3 direction = ray->getDirection();
+                glm::vec3 direction = ray->getDirection();
+                const glm::vec3 trueDir = direction;
+
+                const glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
+                glm::mat4 rotation = glm::orientation(normal, up);
+
+                glm::vec3 testNormal = glm::vec3{0.0f, 0.0f, 1.0f};
+
+                const glm::vec4 testNormalRotated = (rotation * glm::vec4(testNormal.x, testNormal.y, testNormal.z, 1.0f));
+                testNormal = glm::vec3(testNormalRotated.x, testNormalRotated.y, testNormalRotated.z);
+
+                // std::cout << "testNormal: " << testNormal.x << " " << testNormal.y << " " << testNormal.z << std::endl;
+
+                const glm::vec4 directionRotated = (rotation * glm::vec4(direction.x, direction.y, direction.z, 1.0f));
+                direction = - glm::vec3(directionRotated.x, directionRotated.y, directionRotated.z);
+
 
                 const glm::vec2 normalAngles = {std::acos(normal.z), std::atan2(normal.y, normal.x)};
                 const glm::vec2 directionAngles = {std::acos(direction.z), std::atan2(direction.y, direction.x)};
 
-                std::cout << "Normal: " << normal.x << " " << normal.y << " " << normal.z << std::endl;
-                glm::vec3 vec1{1.0f, 0.0f, 0.0f};
-                glm::vec3 vec2{-1.0f, 0.0f, 0.0f};
-                glm::vec3 vec3{0.0f, 1.0f, 0.0f};
-                glm::vec3 vec4{0.0f, -1.0f, 0.0f};
-                glm::vec3 vec5{0.0f, 0.0f, 1.0f};
-                glm::vec3 vec6{0.0f, 0.0f, -1.0f};
-                glm::vec2 angles1 = {std::acos(vec1.z), std::atan2(vec1.y, vec1.x)};
-                glm::vec2 angles2 = {std::acos(vec2.z), std::atan2(vec2.y, vec2.x)};
-                glm::vec2 angles3 = {std::acos(vec3.z), std::atan2(vec3.y, vec3.x)};
-                glm::vec2 angles4 = {std::acos(vec4.z), std::atan2(vec4.y, vec4.x)};
-                glm::vec2 angles5 = {std::acos(vec5.z), std::atan2(vec5.y, vec5.x)};
-                glm::vec2 angles6 = {std::acos(vec6.z), std::atan2(vec6.y, vec6.x)};
+                // std::cout << "Normal: " << normal.x << " " << normal.y << " " << normal.z << std::endl;
+                // glm::vec3 vec1{1.0f, 0.0f, 0.0f};
+                // glm::vec3 vec2{-1.0f, 0.0f, 0.0f};
+                // glm::vec3 vec3{0.0f, 1.0f, 0.0f};
+                // glm::vec3 vec4{0.0f, -1.0f, 0.0f};
+                // glm::vec3 vec5{0.0f, 0.0f, 1.0f};
+                // glm::vec3 vec6{0.0f, 0.0f, -1.0f};
+                // glm::vec2 angles1 = {std::acos(vec1.z), std::atan2(vec1.y, vec1.x)};
+                // glm::vec2 angles2 = {std::acos(vec2.z), std::atan2(vec2.y, vec2.x)};
+                // glm::vec2 angles3 = {std::acos(vec3.z), std::atan2(vec3.y, vec3.x)};
+                // glm::vec2 angles4 = {std::acos(vec4.z), std::atan2(vec4.y, vec4.x)};
+                // glm::vec2 angles5 = {std::acos(vec5.z), std::atan2(vec5.y, vec5.x)};
+                // glm::vec2 angles6 = {std::acos(vec6.z), std::atan2(vec6.y, vec6.x)};
+
+
 
                 // std::cout << "angles1: " << angles1.x*(180.0f / M_PI) << " " << angles1.y*(180.0f / M_PI) << std::endl;
                 // std::cout << "angles2: " << angles2.x*(180.0f / M_PI) << " " << angles2.y*(180.0f / M_PI) << std::endl;
@@ -165,30 +192,51 @@ int main(const int argc, const char* argv[]) {
                 // std::cout << "angles5: " << angles5.x*(180.0f / M_PI) << " " << angles5.y*(180.0f / M_PI) << std::endl;
                 // std::cout << "angles6: " << angles6.x*(180.0f / M_PI) << " " << angles6.y*(180.0f / M_PI) << std::endl;
 
+                glm::vec3 randomVector{std::sin(randomAngles.y)*std::cos(randomAngles.x),
+                                       std::sin(randomAngles.y)*std::sin(randomAngles.x),
+                                       std::cos(randomAngles.y)};
 
+                const glm::vec4 randomVectorRotated = (rotation * glm::vec4(randomVector.x, randomVector.y, randomVector.z, 1.0f));
+                randomVector = glm::normalize(glm::vec3(randomVectorRotated.x, randomVectorRotated.y, randomVectorRotated.z));
+                const glm::vec2 randomAngles2 = {std::acos(randomVector.z), std::atan2(randomVector.y, randomVector.x)};
 
-                const glm::vec2 incomingAngles = normalAngles + directionAngles;
-                const glm::vec2 outgoingAngles = normalAngles + randomAngles;
+                const glm::vec2 incomingAngles = directionAngles;
+                const glm::vec2 outgoingAngles = randomAngles;
 
-                std::cout << "normalAngles: " << normalAngles.x*(180.0f / M_PI) << " " << normalAngles.y*(180.0f / M_PI) << std::endl;
-                std::cout << "randomAngles: " << randomAngles.x*(180.0f / M_PI) << " " << randomAngles.y*(180.0f / M_PI) << std::endl;
-                std::cout << "directionAngles: " << directionAngles.x*(180.0f / M_PI) << " " << directionAngles.y*(180.0f / M_PI) << std::endl;
+                assert( randomAngles.x >= 0.0f && randomAngles.x <= 2.0 * M_PI );
+                assert( randomAngles.y >= 0.0f && randomAngles.y <= M_PI / 2.0 );
 
-                std::cout << "incomingAngles: " << incomingAngles.x*(180.0f / M_PI) << " " << incomingAngles.y*(180.0f / M_PI) << std::endl;
-                std::cout << "outgoingAngles: " << outgoingAngles.x*(180.0f / M_PI) << " " << outgoingAngles.y*(180.0f / M_PI) << std::endl;
+                // std::cout << "normalAngles: " << normalAngles.x*(180.0f / M_PI) << " " << normalAngles.y*(180.0f / M_PI) << std::endl;
+                // std::cout << "randomAngles: " << randomAngles.x*(180.0f / M_PI) << " " << randomAngles.y*(180.0f / M_PI) << std::endl;
+                // std::cout << "directionAngles: " << directionAngles.x*(180.0f / M_PI) << " " << directionAngles.y*(180.0f / M_PI) << std::endl;
 
-                const glm::vec3 reflection{std::sin(outgoingAngles.x)*std::cos(outgoingAngles.y),
-                                           std::sin(outgoingAngles.x)*std::sin(outgoingAngles.y),
-                                           std::cos(outgoingAngles.x)};
+                // std::cout << "incomingAngles: " << incomingAngles.x*(180.0f / M_PI) << " " << incomingAngles.y*(180.0f / M_PI) << std::endl;
+                // std::cout << "outgoingAngles: " << outgoingAngles.x*(180.0f / M_PI) << " " << outgoingAngles.y*(180.0f / M_PI) << std::endl;
+
+                glm::vec3 reflection{std::sin(outgoingAngles.y)*std::cos(outgoingAngles.x),
+                                           std::sin(outgoingAngles.y)*std::sin(outgoingAngles.x),
+                                           std::cos(outgoingAngles.y)};
+
                 const float importance = node->getImportance();
 
                 const float brdf = dynamic_cast<OpaqueObject*>(intersection.first)->computeBrdf(intersection.second, incomingAngles, outgoingAngles);
 
-                node->setReflected(new Node{new Ray{intersection.second, reflection}, importance * brdf});
-                std::cout << "Origin: " << intersection.second.x << " " << intersection.second.y << " " << intersection.second.z << std::endl;
-                std::cout << "Direction: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
-                int a;
-                std::cin >> a;
+                // Node* neWNoe = new Node{new Ray{intersection.second, reflection}, importance * brdf};
+
+                const glm::vec3 newOrigin = intersection.second /*- glm::vec3(trueDir.x*0.01f, trueDir.y*0.01f, trueDir.z*0.01f) */
+
+                      + glm::vec3(normal.x*0.0001f, normal.y*0.0001f, normal.z*0.0001f);
+
+                std::cout << "newOrigin: " << newOrigin.x << " " << newOrigin.y << " " << newOrigin.z << std::endl;
+                std::cout << "newDirection: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
+
+                node->setReflected(new Node{new Ray{newOrigin, reflection}, importance * brdf});
+                // node->setReflected(new Node{new Ray{glm::vec3(9.999999f,0.0,0.0f), glm::vec3(-1.0f,0.0f,0.0f)}, importance * brdf});
+                // node->setReflected(new Node{new Ray{intersection.second + normal * 0.00001f, glm::vec3(-1.0f,0.0f,0.0f)}, importance * brdf});
+                // std::cout << "Origin: " << intersection.second.x << " " << intersection.second.y << " " << intersection.second.z << std::endl;
+                // std::cout << "Outgoing direction: " << reflection.x << " " << reflection.y << " " << reflection.z << std::endl;
+                // int a;
+                // std::cin >> a;
 
                 traverse(node->getReflected());
               }
@@ -204,7 +252,10 @@ int main(const int argc, const char* argv[]) {
         int red = 0;
         int green = 0;
         int blue = 0;
-        int alpha = 0;
+        int alpha = 255;
+ 
+        // if( x == 0 && y == 0) green = 255;
+        // red = ((float)y / 600.0f) * 255;
 
 
         image[4 * width * y + 4 * x + 0] = red;
