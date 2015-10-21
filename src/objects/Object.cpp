@@ -1,7 +1,7 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh, bool isTransparent)
-: mesh_(mesh), isTransparent_(isTransparent) {
+Object::Object(Mesh* mesh, const bool isTransparent, const bool isLight)
+: mesh_(mesh), isTransparent_(isTransparent), isLight_{isLight} {
 
 }
 

@@ -15,7 +15,7 @@ public:
   glm::vec3 getOrigin() const;
   glm::vec3 getDirection() const;
   glm::vec3 getInversedDirection() const;
-
+  glm::vec3 getAsVector() const { return origin_ + direction_; }
 protected:
 
 private:

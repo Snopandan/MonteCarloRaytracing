@@ -18,6 +18,7 @@ public:
   ~SphereMesh();
 
   std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
+  glm::vec3 getNormal(const glm::vec3& position) const override;
 
 private:
   const glm::vec3 position_;

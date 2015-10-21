@@ -15,6 +15,7 @@ public:
   virtual ~Mesh() = 0;
 
   virtual std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const = 0;
+  virtual glm::vec3 getNormal(const glm::vec3& position) const = 0;
 
 private:
 

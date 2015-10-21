@@ -1,7 +1,7 @@
 #include "BoxMesh.h"
 
 
-BoxMesh::BoxMesh(const glm::vec2 xLimits, const glm::vec2 yLimits, const glm::vec2 zLimits) 
+BoxMesh::BoxMesh(const glm::vec2 xLimits, const glm::vec2 yLimits, const glm::vec2 zLimits)
 : xLimits_{xLimits}
 , yLimits_{yLimits}
 , zLimits_{zLimits}
@@ -37,7 +37,7 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
   const bool hit = sMax >= (0.0 > sMin ? 0.0 : sMin);
 
   if( hit && sMin < 0 && sMax > 0) {
-    // Innuti 
+    // Innuti
     return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMax, sMin);
   }
 
@@ -50,5 +50,40 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
     // Boxen bakom oss
     return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
   // }
+
+}
+
+glm::vec3 BoxMesh::getNormal(const glm::vec3& position) const {
+
+  // Bakom
+  if  ( position.x == xLimits_.x ) {
+    return glm::vec3(-1.0f, 0.0f, 0.0f);
+  }
+
+  // Framfor
+  if ( position.x == xLimits_.y ) {
+    return glm::vec3(1.0f, 0.0f, 0.0f);
+  }
+
+  // Hoger
+  if ( position.y == yLimits_.x ) {
+    return glm::vec3(0.0f, -1.0f, 0.0f);
+  }
+
+  // Vänster
+  if ( position.y == yLimits_.y ) {
+    return glm::vec3(0.0f, 1.0f, 0.0f);
+  }
+
+  // Undre
+  if ( position.z == zLimits_.x ) {
+    return glm::vec3(0.0f, 0.0f, -1.0f);
+  }
+
+  // ÖVre
+  if ( position.z == zLimits_.y ) {
+    return glm::vec3(0.0f, 0.0f, 1.0f);
+  }
+
 
 }

@@ -6,10 +6,13 @@
 
 class TransparentObject : public Object{
 public:
-  TransparentObject(Mesh* mesh);
+  TransparentObject(Mesh* mesh, const float transparancy = 0.5);
   virtual ~TransparentObject();
 
+  float getTransparancy() const;
+
 private:
+  float transparancy_;
 
 };
 #endif

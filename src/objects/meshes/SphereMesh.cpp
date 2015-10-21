@@ -50,3 +50,7 @@ std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(const 
 
     return std::make_tuple(Mesh::Intersection::MISS, sMin, sMax);
 }
+
+glm::vec3 SphereMesh::getNormal(const glm::vec3& position) const {
+  return glm::normalize(position - position_);
+}
