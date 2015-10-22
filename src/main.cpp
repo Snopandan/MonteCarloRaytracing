@@ -87,6 +87,7 @@ int main(const int argc, const char* argv[]) {
 
   ThreadPool threadPool;
   // threadPool.setNumberOfWorkers(0); // Use if you want to run the application single threaded
+
   std::mutex update;
   unsigned int columnCounter = 0;
 
@@ -143,16 +144,13 @@ int main(const int argc, const char* argv[]) {
 
             const glm::vec3 reflection = glm::reflect(direction, normal);
 
-            const float materialRefractionIndex = dynamic_cast<TransparentObject*>(intersection.first)->getRefractionIndex();
-
-            Object* lastIntersectedObject = node->getLastIntersectedObject();
-
             const float nodeRefractionIndex = node->getRefractionIndex();
+            const float materialRefractionIndex = dynamic_cast<TransparentObject*>(intersection.first)->getRefractionIndex();
 
             float n1 = nodeRefractionIndex;
             float n2 = materialRefractionIndex;
 
-            if( lastIntersectedObject == intersection.first && nodeRefractionIndex == materialRefractionIndex ) {
+            if( nodeRefractionIndex == materialRefractionIndex && node->getLastIntersectedObject() == intersection.first ) {
               n1 = materialRefractionIndex;
               n2 = 1.0f; // Air
             } 
