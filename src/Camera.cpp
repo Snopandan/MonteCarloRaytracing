@@ -72,6 +72,9 @@ std::vector<Ray*> Camera::getRays() const {
       // std::cout << rayPosition.x << " " << rayPosition.y << " " << rayPosition.z << std::endl;
       // std::cout << rayDirection.x << " " << rayDirection.y << " " << rayDirection.z << std::endl;
 
+      // std::string line;
+      // std::getline(std::cin, line);
+      
       rays.push_back(new Ray{rayPosition, rayDirection});
     }
   }

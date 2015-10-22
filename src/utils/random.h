@@ -4,28 +4,54 @@
 #include <iostream>
 #include <random>
 #include <cmath>
+#include <stdexcept>
+
+#include "exception/Error.h"
 
 #include "glm/glm.hpp"
 
 inline float random0To1() {
   static std::default_random_engine generator;
-  static std::uniform_real_distribution<float> unifrom0To1Distribution(0.0, 1.0);
+  static std::uniform_real_distribution<float> unifrom0To1Distribution(0.0f, 1.0f);
   return unifrom0To1Distribution(generator);
 }
 
 inline glm::vec2 getRandomAngles() {
-  float r1 = random0To1();
-  float r2 = random0To1();
+  const float r1 = random0To1();
+  const float r2 = random0To1();
 
   // std::cout << "R1: " << r1 << std::endl;
   // std::cout << "R2: " << r2 << std::endl;
 
-  float phi = 2 * M_PI * r1;
-  float theta = std::acos(std::sqrt(r2));
+  const float inc = std::acos(std::sqrt(r2));
+  const float horizontal = 2.0f * M_PI * r1;
 
-  // assert( phi >= 0.0f && phi <= 2.0 * M_PI );
-  // assert( theta >= 0.0f && theta <= M_PI / 2.0 );
-  return glm::vec2(phi, theta);
+  // std::cout << "horizontal: " << horizontal << std::endl;
+  // std::cout << "inc: " << inc << std::endl;
+
+
+  if( !((horizontal >= 0.0f) && (horizontal <= (2.0f * M_PI))) ) {
+    throw std::invalid_argument{ report_error("horizontal angle not correct: " << horizontal << " " << inc) };
+  }
+
+  if( !((inc >= 0.0f) && (inc <= (M_PI / 2.0f))) ) {
+    throw std::invalid_argument{ report_error("inclination angle not correct: " << horizontal << " " << inc) };
+  }
+
+  return glm::vec2(inc, horizontal);
+}
+
+inline glm::vec3 getRandomVector() {
+  const float r1 = random0To1();
+  const float r2 = random0To1();
+
+  const float r = std::sqrt(r1);
+  const float theta = 2.0f * M_PI * r2;
+
+  const float x = r * std::cos(theta);
+  const float y = r * std::sin(theta);
+
+  return glm::vec3{x, y, std::sqrt(std::max(0.0f, 1.0f - r1))};
 }
 
 inline bool shouldTerminateRay(const float phi, const float probabilityNotToTerminateRay) {
