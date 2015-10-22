@@ -46,4 +46,32 @@ static float cos2Phi(const Ray& ray) {
   return cosPhi(ray) * cosPhi(ray);
 }
 
+inline glm::mat3 computeRotationMatrix(const glm::vec3& normal) {
+  int imin = 0;
+  for(int i=0; i<3; ++i) {
+    if(std::abs(normal[i]) < std::abs(normal[imin])) {
+      imin = i;
+    }
+  }
+      
+  glm::vec3 v2{0.0f, 0.0f, 0.0f};
+
+  const float dt = normal[imin];
+
+  v2[imin] = 1.0f;
+  for(int i=0;i<3;i++) {
+    v2[i] -= dt*normal[i];
+  }
+
+  const glm::vec3 v3 = glm::cross(normal, v2);
+
+  glm::mat3 rotation;
+  rotation[0][0] = v2.x;     rotation[0][1] = v2.y;     rotation[0][2] = v2.z;     
+  rotation[1][0] = v3.x;     rotation[1][1] = v3.y;     rotation[1][2] = v3.z;     
+  rotation[2][0] = normal.x; rotation[2][1] = normal.y; rotation[2][2] = normal.z; 
+
+  return rotation;
+}
+
+
 #endif

@@ -30,13 +30,13 @@ inline glm::vec2 getRandomAngles() {
   // std::cout << "inc: " << inc << std::endl;
 
 
-  if( !((horizontal >= 0.0f) && (horizontal <= (2.0f * M_PI))) ) {
-    throw std::invalid_argument{ report_error("horizontal angle not correct: " << horizontal << " " << inc) };
-  }
+  // if( !((horizontal >= 0.0f) && (horizontal <= (2.0f * M_PI))) ) {
+  //   throw std::invalid_argument{ report_error("horizontal angle not correct: " << horizontal << " " << inc) };
+  // }
 
-  if( !((inc >= 0.0f) && (inc <= (M_PI / 2.0f))) ) {
-    throw std::invalid_argument{ report_error("inclination angle not correct: " << horizontal << " " << inc) };
-  }
+  // if( !((inc >= 0.0f) && (inc <= (M_PI / 2.0f))) ) {
+  //   throw std::invalid_argument{ report_error("inclination angle not correct: " << horizontal << " " << inc) };
+  // }
 
   return glm::vec2(inc, horizontal);
 }

@@ -97,8 +97,7 @@ glm::vec3 Scene::castShadowRays(const glm::vec3& origin, const unsigned int numb
       const glm::vec3 specularColor = glm::vec3(1.0f, 1.0f, 1.0f);
       const float specularity = 5;
 
-      glm::vec3 color = localLightning(origin, 
-                                       direction, 
+      glm::vec3 color = localLightning(direction, 
                                        normal, 
                                        viewDirection,
                                        ka,

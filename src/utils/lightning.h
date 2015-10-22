@@ -6,8 +6,7 @@
 #include "utils/math.h"
 
 
-inline glm::vec3 localLightning(const glm::vec3& origin, 
-                                const glm::vec3& direction, 
+inline glm::vec3 localLightning(const glm::vec3& direction, 
                                 const glm::vec3& normal, 
                                 const glm::vec3& viewDirection,
                                 const float ka,
