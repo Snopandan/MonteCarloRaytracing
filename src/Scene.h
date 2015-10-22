@@ -12,6 +12,11 @@
 
 #include "objects/Object.h"
 
+#include "utils/lightning.h"
+
+#include "utils/math.h"
+
+
 class Scene {
 
 public:

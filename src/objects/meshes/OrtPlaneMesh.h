@@ -36,6 +36,9 @@ private:
 
   glm::vec3 edge1_;
   glm::vec3 edge2_;
+  
+  glm::vec3 edge3_;
+  glm::vec3 edge4_;
 
   glm::vec2 xLimits_;
   glm::vec2 yLimits_;

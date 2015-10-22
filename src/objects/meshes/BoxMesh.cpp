@@ -38,13 +38,19 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
 
   if( hit && sMin < 0 && sMax > 0) {
     // Innuti
+    // std::cout << "Innuti" << std::endl;
+
     return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMax, sMin);
   }
 
   if( hit && sMin > 0 && sMax > 0 ) {
     // Boxen framför oss
+    // std::cout << "Framfor" << std::endl;
+
     return std::make_tuple(Mesh::Intersection::DOUBLE_HIT, sMin, sMax);
   }
+
+    // std::cout << "BAKOm" << std::endl;
 
   // if( sMin < 0 && sMax < 0 ) {
     // Boxen bakom oss

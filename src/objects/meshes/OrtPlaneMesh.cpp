@@ -10,11 +10,14 @@ OrtPlaneMesh::OrtPlaneMesh(const glm::vec3 upperLeftCorner,
 , upperRightCorner_{lowerRightCorner + upperLeftCorner - lowerLeftCorner}
 { 
 
-  edge1_ = upperLeftCorner_ - lowerLeftCorner_;
-  edge2_ = lowerRightCorner_ - lowerLeftCorner_; 
+  edge1_ = lowerLeftCorner_ - upperLeftCorner_;
+  edge2_ = lowerRightCorner_ - upperLeftCorner_; 
+
+  edge3_ = upperLeftCorner_ - lowerLeftCorner_;
+  edge4_ = lowerRightCorner_ - lowerLeftCorner_; 
 
   normal_ = glm::normalize(glm::cross(edge1_, edge2_));
-  center_ = lowerLeftCorner_ + edge1_/2.0f + edge2_/2.0f;
+  center_ = lowerLeftCorner_ + edge3_/2.0f + edge4_/2.0f;
 
   xLimits_ = glm::vec2{std::min(std::min(upperLeftCorner_.x, lowerLeftCorner_.x), lowerRightCorner_.x) - getEpsilon(), 
                        std::max(std::max(upperLeftCorner_.x, lowerLeftCorner_.x), lowerRightCorner_.x) + getEpsilon()};
@@ -112,6 +115,6 @@ glm::vec3 OrtPlaneMesh::getNormal(const glm::vec3& position) const {
 }
 
 glm::vec3 OrtPlaneMesh::getRandomSurfacePosition() const {
-  return lowerLeftCorner_ + random0To1() * edge1_ + random0To1() * edge2_;
+  return lowerLeftCorner_ + random0To1() * edge3_ + random0To1() * edge4_;
 }
 

@@ -34,6 +34,9 @@
 #include "utils/random.h"
 #include "utils/math.h"
 
+#include "utils/lightning.h"
+
+
 
 void outputImage(const std::string& file,
                  const  std::vector<unsigned char>& image,
@@ -104,17 +107,26 @@ int main(const int argc, const char* argv[]) {
   // OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 6, 5.5}, glm::vec3{-8, 6, 10}, glm::vec3{4, 6, 10} }};
   // scene.add(plane1)threadPool; 
 
-  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{5, 0, 4.5f},    // upperLeftCorner
-                                                           glm::vec3{5, 1, 4.5f},   // lowerLeftCorner 
-                                                           glm::vec3{-5, 1, 4.5f}}, // lowerRightCorner
+  // glm::vec3 one{5.0f, 2.0f, 5.0f};
+  // glm::vec3 two{5.0f, 0.0f, 5.0f};
+  // glm::vec3 three{-5.0f, 0.0f, 5.0f};
+  // glm::vec3 edge1 = glm::normalize(one-two);
+  // glm::vec3 edge2 = glm::normalize(three-two);
+  // glm::vec3 norm = -glm::normalize(glm::cross(edge1, edge2));
+  // std::cout << "norm: " << norm.x << " " << norm.y << " " << norm.z << std::endl;
+
+
+  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{2, 2, 5},    // upperLeftCorner
+                                                           glm::vec3{2, -2, 5},   // lowerLeftCorner 
+                                                           glm::vec3{-2, -2, 5}}, // lowerRightCorner
                                           new BrdfLambertian{0.5f},
                                           true,
                                           glm::vec3{1.0f, 0.0f, 0.0f}};
   scene.add(plane2);
 
-  OpaqueObject* plane3 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{9, 2, 4 },    // upperLeftCorner
-                                                           glm::vec3{9, 0, 4},   // lowerLeftCorner 
-                                                           glm::vec3{9, 0, 6}}, // lowerRightCorner
+  OpaqueObject* plane3 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{9, 2, 6 },    // upperLeftCorner
+                                                           glm::vec3{9, 0, 6},   // lowerLeftCorner 
+                                                           glm::vec3{9, 0, 4}}, // lowerRightCorner
                                           new BrdfLambertian{0.5f},
                                           true,
                                           glm::vec3{0.0f, 0.0f, 1.0f}};
@@ -136,7 +148,7 @@ int main(const int argc, const char* argv[]) {
   Node* importanceTree[width][height];
 
   for(unsigned x = 0; x < width; x++) {
-    WorkItem* workItem = new WorkItem([&importanceTree, &scene, &rays, x]() {
+    WorkItem* workItem = new WorkItem([&image, &importanceTree, &scene, &rays, x]() {
 
       for(unsigned y = 0; y < height; y++) {
 
@@ -157,51 +169,66 @@ int main(const int argc, const char* argv[]) {
             const glm::vec3 origin = ray->getOrigin();
             const glm::vec3 direction = ray->getDirection();
             const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+            const glm::vec3 viewDirection = glm::normalize(origin);
 
-            const glm::vec3 L = -direction;
-            const glm::vec3 N = normal;
-
-            const glm::vec3 view_direction = glm::normalize(origin);
-
-            const glm::vec3 V = -view_direction;
-            const glm::vec3 R = glm::reflect(L, N);
-
+            // TODO: Material properties
             const float ka = 0.3f;
             const float kd = 0.7f;
             const float ks = 0.2f;
-
-            const glm::vec3 color = glm::vec3(0.5f, 0.5f, 0.5f); // TODO: Get from object
-            const glm::vec3 diffuseColor = color;
+            const glm::vec3 diffuseColor = glm::vec3(0.9f, 0.9f, 0.9f);;
             const glm::vec3 ambientColor = diffuseColor;
             const glm::vec3 specularColor = glm::vec3(1.0f, 1.0f, 1.0f);
-
             const float specularity = 5;
 
-            glm::vec3 frag_color;
+            glm::vec3 color = localLightning(origin, 
+                                             direction, 
+                                             normal, 
+                                             viewDirection,
+                                             ka,
+                                             kd,
+                                             ks,
+                                             ambientColor,
+                                             diffuseColor,
+                                             specularColor,
+                                             specularity);
 
-            frag_color = ka * ambientColor
-                       + kd * std::max(0.0f, glm::dot(L, N)) * diffuseColor
-                       + ks * std::pow(clamp(glm::dot(R, V), 0.0f, 1.0f), specularity) * specularColor;
-
-            // TODO: Do something with frag_color!
-            node->setIntensity(intersection.first->getIntensity());
+            // TODO: Do something with color!
+            node->setIntensity(color * intersection.first->getIntensity());
           }
 
           if( intersection.first != nullptr && !intersection.first->isLight() ) {
             if( intersection.first->isTransparent() ) {
               const glm::vec3 direction = ray->getDirection();
               const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+
               const glm::vec3 reflection = glm::reflect(direction, normal);
-              const float ratio = 1.0f; // TODO: Get from object
-              const glm::vec3 refraction = glm::refract(direction, normal, ratio);
+
+              const float materialRefractionIndex = dynamic_cast<TransparentObject*>(intersection.first)->getRefractionIndex();
+
+              Object* lastIntersectedObject = node->getLastIntersectedObject();
+
+              const float nodeRefractionIndex = node->getRefractionIndex();
+
+              float n1 = nodeRefractionIndex;
+              float n2 = materialRefractionIndex;
+
+              if( lastIntersectedObject == intersection.first && nodeRefractionIndex == materialRefractionIndex ) {
+                n1 = materialRefractionIndex;
+                n2 = 1.0f;
+              } 
+
+              const float refractionIndexRatio = n1 / n2; 
+              const glm::vec3 refraction = glm::refract(direction, normal, refractionIndexRatio);
+
               const float importance = node->getImportance();
               const float transparency = dynamic_cast<TransparentObject*>(intersection.first)->getTransparancy();
 
               const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
               const glm::vec3 newRefractedOrigin = intersection.second - normal * getEpsilon() + direction * getEpsilon();
 
-              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1 - transparency)});
-              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency});
+              // TODO: Compute Fresnel in order to give the right porportions to the reflected and refracted part!
+              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1 - transparency), intersection.first, n2});
+              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency, intersection.first, n2});
 
               traverse(node->getReflected());
               traverse(node->getRefracted());
@@ -209,7 +236,7 @@ int main(const int argc, const char* argv[]) {
               const glm::vec2 randomAngles = getRandomAngles();
               const float probabilityNotToTerminateRay = 0.5;
 
-              if( node == root  || !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) ) {
+              if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) || node == root ) {
                 const glm::vec3 normal = intersection.first->getNormal(intersection.second);
                 const glm::vec3 direction = ray->getDirection();
 
@@ -236,11 +263,13 @@ int main(const int argc, const char* argv[]) {
 
                 const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
 
-                node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf});
-
-                node->addIntensity(importance * scene.castShadowRays(newReflectedOrigin, 1));
+                node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf, intersection.first, node->getRefractionIndex()});
 
                 traverse(node->getReflected());
+
+                node->setIntensity(importance * scene.castShadowRays(newReflectedOrigin, 1));
+                // node->addIntensity(importance * node->getReflected()->getIntensity());
+
               }
             }
           }
@@ -249,60 +278,71 @@ int main(const int argc, const char* argv[]) {
 
         importanceTree[x][y] = root;
         traverse(root);
-      }
-
-    });
-    threadPool.add(workItem);
-  }
-  threadPool.wait();
-
-
-
-  // Compute pixels
-  for(unsigned x = 0; x < width; x++) {
-    WorkItem* workItem = new WorkItem([&, x]() {
-
-      for(unsigned y = 0; y < height; y++) {
-
-        std::function<void(Node*)> traverse = [&scene, &traverse](Node* node) {
-          Node* reflected = node->getReflected();
-          Node* refracted = node->getRefracted();
-
-          if( reflected != nullptr ) {
-            traverse(reflected);
-            node->addIntensity(node->getImportance() * reflected->getIntensity());
-          }
-
-          if( refracted != nullptr ) {
-            traverse(refracted);
-            node->addIntensity(node->getImportance() * refracted->getIntensity());
-          }
-
-        };
-
-        traverse(importanceTree[x][y]);
 
         const glm::vec3 color = importanceTree[x][y]->getIntensity();
-        // std::cout << "Color: " << color.r << " " << color.g << " " << color.b << std::endl;
-        // std::string line;
-        // std::getline(std::cin, line);
-
         int red = color.r * 100;
         int green = color.g * 100;
         int blue = color.b * 100;
         int alpha = 255;
-
         image[4 * width * y + 4 * x + 0] = red;
         image[4 * width * y + 4 * x + 1] = green;
         image[4 * width * y + 4 * x + 2] = blue;
         image[4 * width * y + 4 * x + 3] = alpha;
-
+        
       }
 
     });
     threadPool.add(workItem);
   }
   threadPool.wait();
+
+
+
+  // // Compute pixels
+  // for(unsigned x = 0; x < width; x++) {
+  //   WorkItem* workItem = new WorkItem([&, x]() {
+
+  //     for(unsigned y = 0; y < height; y++) {
+
+  //       std::function<void(Node*)> traverse = [&scene, &traverse](Node* node) {
+  //         Node* reflected = node->getReflected();
+  //         Node* refracted = node->getRefracted();
+
+  //         if( reflected != nullptr ) {
+  //           traverse(reflected);
+  //           node->addIntensity(node->getImportance() * reflected->getIntensity());
+  //         }
+
+  //         if( refracted != nullptr ) {
+  //           traverse(refracted);
+  //           node->addIntensity(node->getImportance() * refracted->getIntensity());
+  //         }
+
+  //       };
+
+  //       traverse(importanceTree[x][y]);
+
+  //       const glm::vec3 color = importanceTree[x][y]->getIntensity();
+  //       // std::cout << "Color: " << color.r << " " << color.g << " " << color.b << std::endl;
+  //       // std::string line;
+  //       // std::getline(std::cin, line);
+
+  //       int red = color.r * 100;
+  //       int green = color.g * 100;
+  //       int blue = color.b * 100;
+  //       int alpha = 255;
+
+  //       image[4 * width * y + 4 * x + 0] = red;
+  //       image[4 * width * y + 4 * x + 1] = green;
+  //       image[4 * width * y + 4 * x + 2] = blue;
+  //       image[4 * width * y + 4 * x + 3] = alpha;
+
+  //     }
+
+  //   });
+  //   threadPool.add(workItem);
+  // }
+  // threadPool.wait();
 
 
 
