@@ -37,6 +37,34 @@
 #include "utils/lightning.h"
 
 
+Scene createScene() {
+  Scene scene;
+
+  OpaqueObject* boundingBox = new OpaqueObject{new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
+                                               new BrdfLambertian{0.5f}};
+  scene.add(boundingBox);
+
+  OpaqueObject* lightPlane1 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{2, 2, 5},    // upperLeftCorner
+                                                                glm::vec3{2, -2, 5},   // lowerLeftCorner 
+                                                                glm::vec3{-2, -2, 5}}, // lowerRightCorner
+                                               new BrdfLambertian{0.5f},
+                                               true,
+                                               glm::vec3{1.0f, 0.0f, 0.0f}};
+  scene.add(lightPlane1);
+
+  OpaqueObject* lightPlane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{9, 2, 6 }, // upperLeftCorner
+                                                                glm::vec3{9, 0, 6},  // lowerLeftCorner 
+                                                                glm::vec3{9, 0, 4}}, // lowerRightCorner
+                                               new BrdfLambertian{0.5f},
+                                               true,
+                                               glm::vec3{0.0f, 0.0f, 1.0f}};
+  scene.add(lightPlane2);
+
+  scene.complete();
+
+  return scene;
+}
+
 
 void outputImage(const std::string& file,
                  const  std::vector<unsigned char>& image,
@@ -54,12 +82,9 @@ void outputImage(const std::string& file,
 }
 
 
-
 int main(const int argc, const char* argv[]) {
 
   auto startTime = std::chrono::high_resolution_clock::now();
-
-  const std::string file = "test.png";
 
   const unsigned int width = 800;
   const unsigned int height = 600;
@@ -73,67 +98,10 @@ int main(const int argc, const char* argv[]) {
 
 
 
+  Scene scene = createScene();
 
 
-  Scene scene;
 
-  OpaqueObject* boundingBox = new OpaqueObject{new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
-    new BrdfLambertian{0.5f}};
-  scene.add(boundingBox);
-
-  // float box1XTrans = 2.5;
-  // float box1YTrans = 0.0;
-  // float box1Width = 0.9;
-  // OpaqueObject* box1 = new OpaqueObject{new BoxMesh{glm::vec2{-box1Width, box1Width} + glm::vec2{box1XTrans, box1XTrans},
-  //                                                   glm::vec2{-box1Width, box1Width} + glm::vec2{box1YTrans, box1YTrans},
-  //                                                   glm::vec2{1.1, 1.2}},
-  //                                       new BrdfLambertian{0.5f},
-  //                                       true,
-  //                                       glm::vec3{0.0f, 1.0f, 0.0f}};
-  // scene.add(box1);
-
-  // OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{0.0f, 0.0f, 0.0f}, 10.0f},
-  //   new BrdfLambertian{1.0f}};
-  // scene.add(sphere1);
-
-
-  // std::vector<glm::vec3> verticies;
-  // verticies.push_back(glm::vec3{-4, 0, 7});
-  // verticies.push_back(glm::vec3{8, 0, 7});
-  // verticies.push_back(glm::vec3{0, 9, 7});
-  // OpaqueObject* triangle1 = new OpaqueObject{new TriangleMesh{verticies}};
-  // scene.add(triangle1);
-
-  // OpaqueObject* plane1 = new OpaqueObject{new PlaneMesh{glm::vec3{-8, 6, 5.5}, glm::vec3{-8, 6, 10}, glm::vec3{4, 6, 10} }};
-  // scene.add(plane1)threadPool; 
-
-  // glm::vec3 one{5.0f, 2.0f, 5.0f};
-  // glm::vec3 two{5.0f, 0.0f, 5.0f};
-  // glm::vec3 three{-5.0f, 0.0f, 5.0f};
-  // glm::vec3 edge1 = glm::normalize(one-two);
-  // glm::vec3 edge2 = glm::normalize(three-two);
-  // glm::vec3 norm = -glm::normalize(glm::cross(edge1, edge2));
-  // std::cout << "norm: " << norm.x << " " << norm.y << " " << norm.z << std::endl;
-
-
-  OpaqueObject* plane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{2, 2, 5},    // upperLeftCorner
-                                                           glm::vec3{2, -2, 5},   // lowerLeftCorner 
-                                                           glm::vec3{-2, -2, 5}}, // lowerRightCorner
-                                          new BrdfLambertian{0.5f},
-                                          true,
-                                          glm::vec3{1.0f, 0.0f, 0.0f}};
-  scene.add(plane2);
-
-  OpaqueObject* plane3 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{9, 2, 6 },    // upperLeftCorner
-                                                           glm::vec3{9, 0, 6},   // lowerLeftCorner 
-                                                           glm::vec3{9, 0, 4}}, // lowerRightCorner
-                                          new BrdfLambertian{0.5f},
-                                          true,
-                                          glm::vec3{0.0f, 0.0f, 1.0f}};
-  scene.add(plane3);
-
-
-  scene.complete();
 
   std::vector<unsigned char> image;
   image.resize(width * height * 4);
@@ -159,13 +127,11 @@ int main(const int argc, const char* argv[]) {
           const Ray* ray = node->getRay();
           const std::pair<Object*, glm::vec3> intersection = scene.intersect(ray);
 
-          if( intersection.first == nullptr) {
-            const glm::vec3 direction = ray->getDirection();
-            const glm::vec3 origin = ray->getOrigin();
+          if( intersection.first == nullptr) { // No intersection found
             throw std::invalid_argument{"No intersection found."};
-          }
 
-          if( intersection.first->isLight() ) {
+          } else if( intersection.first->isLight() ) { // If intersecting object is a light source
+
             const glm::vec3 origin = ray->getOrigin();
             const glm::vec3 direction = ray->getDirection();
             const glm::vec3 normal = intersection.first->getNormal(intersection.second);
@@ -178,7 +144,7 @@ int main(const int argc, const char* argv[]) {
             const glm::vec3 diffuseColor = glm::vec3(0.9f, 0.9f, 0.9f);;
             const glm::vec3 ambientColor = diffuseColor;
             const glm::vec3 specularColor = glm::vec3(1.0f, 1.0f, 1.0f);
-            const float specularity = 5;
+            const float specularity = 5.0f;
 
             glm::vec3 color = localLightning(origin, 
                                              direction, 
@@ -194,86 +160,83 @@ int main(const int argc, const char* argv[]) {
 
             // TODO: Do something with color!
             node->setIntensity(color * intersection.first->getIntensity());
-          }
 
-          if( intersection.first != nullptr && !intersection.first->isLight() ) {
-            if( intersection.first->isTransparent() ) {
-              const glm::vec3 direction = ray->getDirection();
+          } else if( intersection.first->isTransparent() ) { // If intersecting object is transparent
+
+            const glm::vec3 direction = ray->getDirection();
+            const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+
+            const glm::vec3 reflection = glm::reflect(direction, normal);
+
+            const float materialRefractionIndex = dynamic_cast<TransparentObject*>(intersection.first)->getRefractionIndex();
+
+            Object* lastIntersectedObject = node->getLastIntersectedObject();
+
+            const float nodeRefractionIndex = node->getRefractionIndex();
+
+            float n1 = nodeRefractionIndex;
+            float n2 = materialRefractionIndex;
+
+            if( lastIntersectedObject == intersection.first && nodeRefractionIndex == materialRefractionIndex ) {
+              n1 = materialRefractionIndex;
+              n2 = 1.0f;
+            } 
+
+            const float refractionIndexRatio = n1 / n2; 
+            const glm::vec3 refraction = glm::refract(direction, normal, refractionIndexRatio);
+
+            const float importance = node->getImportance();
+            const float transparency = dynamic_cast<TransparentObject*>(intersection.first)->getTransparancy();
+
+            const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
+            const glm::vec3 newRefractedOrigin = intersection.second - normal * getEpsilon() + direction * getEpsilon();
+
+            // TODO: Compute Fresnel in order to give the right porportions to the reflected and refracted part!
+            node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1.0f - transparency), intersection.first, n2});
+            node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency, intersection.first, n2});
+
+            traverse(node->getReflected());
+            traverse(node->getRefracted());
+
+          } else { // If intersecting object is opaque and not a light source
+
+            const glm::vec2 randomAngles = getRandomAngles();
+            const float probabilityNotToTerminateRay = 0.5f;
+
+            if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) || node == root ) {
               const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+              const glm::vec3 direction = ray->getDirection();
 
-              const glm::vec3 reflection = glm::reflect(direction, normal);
+              const glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
+              const glm::mat4 rotation = glm::orientation(normal, up);
 
-              const float materialRefractionIndex = dynamic_cast<TransparentObject*>(intersection.first)->getRefractionIndex();
+              const glm::vec4 hemisphereIncomingDirectionFlipped = -(rotation * glm::vec4(direction.x, direction.y, direction.z, 1.0f));
 
-              Object* lastIntersectedObject = node->getLastIntersectedObject();
+              const glm::vec2 directionAngles = {std::acos(hemisphereIncomingDirectionFlipped.z), std::atan2(hemisphereIncomingDirectionFlipped.y, hemisphereIncomingDirectionFlipped.x)};
 
-              const float nodeRefractionIndex = node->getRefractionIndex();
+              const glm::vec2 incomingAngles = directionAngles;
+              const glm::vec2 outgoingAngles = randomAngles;
 
-              float n1 = nodeRefractionIndex;
-              float n2 = materialRefractionIndex;
-
-              if( lastIntersectedObject == intersection.first && nodeRefractionIndex == materialRefractionIndex ) {
-                n1 = materialRefractionIndex;
-                n2 = 1.0f;
-              } 
-
-              const float refractionIndexRatio = n1 / n2; 
-              const glm::vec3 refraction = glm::refract(direction, normal, refractionIndexRatio);
+              const glm::vec3 reflection{std::sin(outgoingAngles.y)*std::cos(outgoingAngles.x),
+                                         std::sin(outgoingAngles.y)*std::sin(outgoingAngles.x),
+                                         std::cos(outgoingAngles.y)};
 
               const float importance = node->getImportance();
-              const float transparency = dynamic_cast<TransparentObject*>(intersection.first)->getTransparancy();
+
+              const float brdf = dynamic_cast<OpaqueObject*>(intersection.first)->computeBrdf(intersection.second, incomingAngles, outgoingAngles);
 
               const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
-              const glm::vec3 newRefractedOrigin = intersection.second - normal * getEpsilon() + direction * getEpsilon();
 
-              // TODO: Compute Fresnel in order to give the right porportions to the reflected and refracted part!
-              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1 - transparency), intersection.first, n2});
-              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency, intersection.first, n2});
+              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf, intersection.first, node->getRefractionIndex()});
 
               traverse(node->getReflected());
-              traverse(node->getRefracted());
-            } else {
-              const glm::vec2 randomAngles = getRandomAngles();
-              const float probabilityNotToTerminateRay = 0.5;
 
-              if( !shouldTerminateRay(randomAngles.x, probabilityNotToTerminateRay) || node == root ) {
-                const glm::vec3 normal = intersection.first->getNormal(intersection.second);
-                const glm::vec3 direction = ray->getDirection();
-
-                const glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
-                const glm::mat4 rotation = glm::orientation(normal, up);
-
-                const glm::vec4 hemisphereIncomingDirectionFlipped = -(rotation * glm::vec4(direction.x, direction.y, direction.z, 1.0f));
-
-                const glm::vec2 directionAngles = {std::acos(hemisphereIncomingDirectionFlipped.z), std::atan2(hemisphereIncomingDirectionFlipped.y, hemisphereIncomingDirectionFlipped.x)};
-
-                const glm::vec2 incomingAngles = directionAngles;
-                const glm::vec2 outgoingAngles = randomAngles;
-
-                assert( randomAngles.x >= 0.0f && randomAngles.x <= 2.0 * M_PI );
-                assert( randomAngles.y >= 0.0f && randomAngles.y <= M_PI / 2.0 );
-
-                const glm::vec3 reflection{std::sin(outgoingAngles.y)*std::cos(outgoingAngles.x),
-                                           std::sin(outgoingAngles.y)*std::sin(outgoingAngles.x),
-                                           std::cos(outgoingAngles.y)};
-
-                const float importance = node->getImportance();
-
-                const float brdf = dynamic_cast<OpaqueObject*>(intersection.first)->computeBrdf(intersection.second, incomingAngles, outgoingAngles);
-
-                const glm::vec3 newReflectedOrigin = intersection.second + normal * getEpsilon() - direction * getEpsilon();
-
-                node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * brdf, intersection.first, node->getRefractionIndex()});
-
-                traverse(node->getReflected());
-
-                node->setIntensity(importance * scene.castShadowRays(newReflectedOrigin, 1));
-                // node->addIntensity(importance * node->getReflected()->getIntensity());
-
-              }
+              node->setIntensity(importance * scene.castShadowRays(newReflectedOrigin, 1));
+              node->addIntensity(importance * node->getReflected()->getIntensity());
             }
-          }
 
+          }
+          
         };
 
         importanceTree[x][y] = root;
@@ -288,7 +251,7 @@ int main(const int argc, const char* argv[]) {
         image[4 * width * y + 4 * x + 1] = green;
         image[4 * width * y + 4 * x + 2] = blue;
         image[4 * width * y + 4 * x + 3] = alpha;
-        
+
       }
 
     });
@@ -345,7 +308,7 @@ int main(const int argc, const char* argv[]) {
   // threadPool.wait();
 
 
-
+  const std::string file = "test.png";
   outputImage(file, image, width, height);
 
 

@@ -23,6 +23,8 @@ inline glm::vec2 getRandomAngles() {
   float phi = 2 * M_PI * r1;
   float theta = std::acos(std::sqrt(r2));
 
+  // assert( phi >= 0.0f && phi <= 2.0 * M_PI );
+  // assert( theta >= 0.0f && theta <= M_PI / 2.0 );
   return glm::vec2(phi, theta);
 }
 
