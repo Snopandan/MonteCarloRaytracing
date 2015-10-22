@@ -171,6 +171,9 @@ int main(const int argc, const char* argv[]) {
             traverse(node->getReflected());
             traverse(node->getRefracted());
 
+            delete node->getReflected();
+            delete node->getRefracted();
+
           } else { // If intersecting object is opaque and not a light source
 
             const glm::vec2 outgoingAngles = getRandomAngles();
@@ -204,6 +207,7 @@ int main(const int argc, const char* argv[]) {
               node->setIntensity(importance * scene.castShadowRays(newReflectedOrigin, 4));
               node->addIntensity(importance * node->getReflected()->getIntensity());
 
+              delete node->getReflected();
             }
 
           }
@@ -211,8 +215,8 @@ int main(const int argc, const char* argv[]) {
         };
 
         traverse(root);
-
         const glm::vec3 color = root->getIntensity();
+        delete root;
 
         const int red = std::min( (int)(color.r * 100), 255);
         const int green = std::min( (int)(color.g * 100), 255);
@@ -237,8 +241,6 @@ int main(const int argc, const char* argv[]) {
 
   const std::string file = "test.png";
   outputImage(file, image, width, height);
-
-  // TODO: Cleanup!
 
   const auto endTime = std::chrono::high_resolution_clock::now();
   const unsigned int duration = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();

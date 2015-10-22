@@ -13,7 +13,7 @@ Node::Node(Ray* ray, const float importance, Object* lastIntersectedObject, cons
 }
 
 Node::~Node() {
-
+  delete ray_;
 }
 
 void Node::setReflected(Node* reflected) {
