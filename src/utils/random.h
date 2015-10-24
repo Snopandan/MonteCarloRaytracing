@@ -55,7 +55,9 @@ inline glm::vec3 getRandomVector() {
 }
 
 inline bool shouldTerminateRay(const float phi, const float probabilityNotToTerminateRay) {
-  return (phi / probabilityNotToTerminateRay) > (2*M_PI);
+  return (phi / probabilityNotToTerminateRay) > (2.0f * M_PI);
+  // return phi > (2.0f * M_PI * probabilityNotToTerminateRay) ;
+
 }
 
 

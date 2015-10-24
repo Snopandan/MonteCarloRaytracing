@@ -19,6 +19,7 @@ public:
   virtual glm::vec3 getNormal(const glm::vec3& position) const = 0;
   virtual glm::vec3 getRandomSurfacePosition() const { throw std::invalid_argument{"getRandomSurfacePosition() not implemented"};
                                                        return glm::vec3{0,0,0}; }
+  virtual float getArea() const { throw std::invalid_argument{"getArea() not implemented"}; return 1.0f; }
 
 private:
 

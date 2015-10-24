@@ -64,56 +64,58 @@ std::pair<Object*, glm::vec3> Scene::intersectImpl(const Ray* ray, const std::ve
 }
 
 
-glm::vec3 Scene::castShadowRays(const glm::vec3& origin, const unsigned int numberOfShadowRaysToLaunch) const {
-  static std::default_random_engine generator;
-  std::uniform_int_distribution<int> chooseLightDistribution(0, lightObjects_.size()-1);
+glm::vec3 Scene::castShadowRays(const glm::vec3& origin, 
+                                const glm::vec2 incomingAngles,
+                                const glm::mat3& rotation,
+                                Object* object,
+                                const unsigned int numberOfShadowRaysToLaunch,
+                                const glm::vec3& trueNormal,
+                                const glm::vec2& trueNormalAngles) const {
 
   glm::vec3 intensity{0, 0, 0};
 
-  for(unsigned int i=0; i<numberOfShadowRaysToLaunch; i++) {
-    const unsigned int light = chooseLightDistribution(generator);
-    const glm::vec3 randomLightPosition = lightObjects_[light]->getRandomSurfacePosition();
-      // std::cout << "randomLightPosition: " << randomLightPosition.x << " " << randomLightPosition.y << " " << randomLightPosition.z << std::endl;
-    // assert( randomLightPosition.x >= -2 && randomLightPosition.x <= 2 );
-    // assert( randomLightPosition.y >= -2 && randomLightPosition.y <= 2 );
-    // assert( randomLightPosition.z >= -4.5 );
+  for(unsigned int i=0; i<lightObjects_.size(); i++) {
 
-    const Ray* ray = new Ray{origin, glm::normalize(randomLightPosition-origin)};
-    const std::pair<Object*, glm::vec3> lightIntersection = intersectImpl(ray, opaqueObjects_);
+    glm::vec3 contribution{0, 0, 0};
+    const float area = lightObjects_[i]->getArea();
+    const glm::vec3 light = lightObjects_[i]->getIntensity();
 
-    if( lightIntersection.first == lightObjects_[light] ) {
+    for(unsigned int r=0; r<numberOfShadowRaysToLaunch; r++) {
+      const glm::vec3 randomLightPosition = lightObjects_[i]->getRandomSurfacePosition();
+      const glm::vec3 shadowVector = randomLightPosition - origin;
+      const Ray* ray = new Ray{origin, glm::normalize(shadowVector)};
+      const std::pair<Object*, glm::vec3> intersection = intersectImpl(ray, opaqueObjects_);
 
-      const glm::vec3 origin = ray->getOrigin();
-      const glm::vec3 direction = ray->getDirection();
-      const glm::vec3 normal = lightIntersection.first->getNormal(lightIntersection.second);
-      const glm::vec3 viewDirection = glm::vec3(origin);
+      if( intersection.first == lightObjects_[i] ) {
+        const glm::vec3 origin = ray->getOrigin();
+        const glm::vec3 direction = ray->getDirection();
+        const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+        float inclination = std::acos(glm::dot(-direction, normal));
 
-      // TODO: Material properties
-      const float ka = 0.3f;
-      const float kd = 0.7f;
-      const float ks = 0.2f;
-      const glm::vec3 diffuseColor = glm::vec3(0.9f, 0.9f, 0.9f);;
-      const glm::vec3 ambientColor = diffuseColor;
-      const glm::vec3 specularColor = glm::vec3(1.0f, 1.0f, 1.0f);
-      const float specularity = 5;
+         glm::vec2 d1 = {std::acos(direction.z), 
+                         std::atan2(direction.y, direction.x)};
 
-      glm::vec3 color = localLightning(direction, 
-                                       normal, 
-                                       viewDirection,
-                                       ka,
-                                       kd,
-                                       ks,
-                                       ambientColor,
-                                       diffuseColor,
-                                       specularColor,
-                                       specularity);
+        // float inclination = std::acos(glm::dot(-direction, trueNormal));
+        // glm::vec3 hemisphereOutgoingDirection = glm::inverse(rotation) * -direction;
 
-      intensity += color * lightObjects_[light]->getIntensity();
-      // intensity += glm::vec3(0, 1, 0);
-    } 
-    delete ray;
+         glm::vec2 outgoingAngles = d1 - trueNormalAngles;
+        
+        const float brdf = dynamic_cast<OpaqueObject*>(object)->computeBrdf(intersection.second, incomingAngles, outgoingAngles);
+
+        const float geometric = (std::cos(inclination)*std::cos(outgoingAngles.x) ) / (glm::dot(shadowVector, shadowVector) );
+
+        contribution += brdf * geometric;
+        // contribution += brdf;
+        // contribution += geometric;
+      }
+
+      intensity += (area / (float) numberOfShadowRaysToLaunch) * contribution * light;
+      delete ray;
+    }
+
   }
 
   return intensity;
+
 }
 

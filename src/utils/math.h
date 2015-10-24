@@ -2,6 +2,7 @@
 #define MATH_H
 
 #include <cmath>
+#include <random>
 
 #include "Ray.h"
 
@@ -47,6 +48,12 @@ static float cos2Phi(const Ray& ray) {
 }
 
 inline glm::mat3 computeRotationMatrix(const glm::vec3& normal) {
+  // static std::default_random_engine generator;
+  // static std::default_random_engine generator2;
+  // static std::uniform_int_distribution<int> dist(0,2);
+  // static std::uniform_int_distribution<int> dist2(0,1);
+
+  // int imin = dist(generator);
   int imin = 0;
   for(int i=0; i<3; ++i) {
     if(std::abs(normal[i]) < std::abs(normal[imin])) {
@@ -69,6 +76,26 @@ inline glm::mat3 computeRotationMatrix(const glm::vec3& normal) {
   rotation[0][0] = v2.x;     rotation[0][1] = v2.y;     rotation[0][2] = v2.z;     
   rotation[1][0] = v3.x;     rotation[1][1] = v3.y;     rotation[1][2] = v3.z;     
   rotation[2][0] = normal.x; rotation[2][1] = normal.y; rotation[2][2] = normal.z; 
+
+  // rotation[0][0] = v2.x;     rotation[0][1] = v3.y;     rotation[0][2] = normal.z;     
+  // rotation[1][0] = v2.x;     rotation[1][1] = v3.y;     rotation[1][2] = normal.z;     
+  // rotation[2][0] = v2.x;     rotation[2][1] = v3.y;     rotation[2][2] = normal.z; 
+
+
+  // int randa = dist(generator);
+  // if( randa == 0 ) {
+  //   rotation[0][0] = v2.x;     rotation[0][1] = v2.y;     rotation[0][2] = v2.z;     
+  //   rotation[1][0] = v3.x;     rotation[1][1] = v3.y;     rotation[1][2] = v3.z;     
+  //   rotation[2][0] = normal.x; rotation[2][1] = normal.y; rotation[2][2] = normal.z; 
+  // } else if( randa == 1 ) {
+  //   rotation[0][0] = v3.x;     rotation[0][1] = v3.y;     rotation[0][2] = v3.z;     
+  //   rotation[1][0] = v2.x;     rotation[1][1] = v2.y;     rotation[1][2] = v2.z;     
+  //   rotation[2][0] = normal.x; rotation[2][1] = normal.y; rotation[2][2] = normal.z; 
+  // } else {
+  //   rotation[0][0] = v3.x;     rotation[0][1] = v3.y;     rotation[0][2] = v3.z;     
+  //   rotation[1][0] = normal.x;     rotation[1][1] = normal.y;     rotation[1][2] = normal.z;     
+  //   rotation[2][0] = v2.x; rotation[2][1] = v2.y; rotation[2][2] = v2.z; 
+  // }
 
   return rotation;
 }

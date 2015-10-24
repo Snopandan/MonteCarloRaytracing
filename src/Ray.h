@@ -16,6 +16,8 @@ public:
   glm::vec3 getDirection() const;
   glm::vec3 getInversedDirection() const;
   glm::vec3 getAsVector() const { return glm::normalize(origin_ + direction_); }
+  glm::vec2 getAngles() const;
+
 protected:
 
 private:

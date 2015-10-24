@@ -11,10 +11,12 @@
 #include "glm/glm.hpp"
 
 #include "objects/Object.h"
+#include "objects/OpaqueObject.h"
 
 #include "utils/lightning.h"
 
 #include "utils/math.h"
+#include "utils/random.h"
 
 
 class Scene {
@@ -28,7 +30,12 @@ public:
 
   std::pair<Object*, glm::vec3> intersect(const Ray* ray) const;
   std::pair<Object*, glm::vec3> intersectNonTransparent(const Ray* ray) const;
-  glm::vec3 castShadowRays(const glm::vec3& origin, const unsigned int numberOfShadowRaysToLaunch) const;
+  glm::vec3 castShadowRays(const glm::vec3& origin, 
+                           const glm::vec2 incomingAngles,
+                           const glm::mat3& rotation,
+                           Object* object,
+                           const unsigned int numberOfShadowRaysToLaunch, const glm::vec3& trueNormal,
+                                const glm::vec2& trueNormalAngles) const;
 
   void complete();
 

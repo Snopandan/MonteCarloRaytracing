@@ -118,3 +118,8 @@ glm::vec3 OrtPlaneMesh::getRandomSurfacePosition() const {
   return lowerLeftCorner_ + random0To1() * edge3_ + random0To1() * edge4_;
 }
 
+float OrtPlaneMesh::getArea() const {
+  return glm::length(edge3_) * glm::length(edge4_);
+}
+
+
