@@ -17,7 +17,8 @@ std::tuple<Mesh::Intersection, float, float> TriangleMesh::getIntersections(cons
 
   for(unsigned int i=0; i<verticies_.size(); i+=3) {
     glm::vec3 intersection;
-    bool intersects = triangleIntersection(ray, verticies_[i], verticies_[i+1], verticies_[i+2], intersection);
+    glm::vec3 normal;
+    bool intersects = triangleIntersection(ray, verticies_[i], verticies_[i+1], verticies_[i+2], intersection, normal);
 
     if( intersects ) {
       float distance = glm::distance(intersection, origin);
@@ -40,11 +41,90 @@ std::tuple<Mesh::Intersection, float, float> TriangleMesh::getIntersections(cons
 }
 
 
+std::tuple<Mesh::Intersection, glm::vec3, glm::vec3> TriangleMesh::hit(const Ray* ray) const {
+ const glm::vec3 origin = ray->getOrigin();
+  
+  bool hit = false;
+  float nearestHitDistance{std::numeric_limits<float>::max()};
+  glm::vec3 nearestHit{0.0f, 0.0f, 0.0f};
+  glm::vec3 nearestNormal{0.0f, 0.0f, 0.0f};
+
+  for(unsigned int i=0; i<verticies_.size(); i+=3) {
+    glm::vec3 intersection;
+    glm::vec3 normal;
+    bool intersects = triangleIntersection(ray, verticies_[i], verticies_[i+1], verticies_[i+2], intersection, normal);
+
+    if( intersects ) {
+      float distance = glm::distance(intersection, origin);
+      if( distance < nearestHitDistance ) {
+        nearestHit = intersection;
+        nearestNormal = normal;
+        hit = true;
+      }
+    }
+  }
+
+  if( hit ) {
+    return std::make_tuple(Mesh::Intersection::SINGLE_HIT, nearestHit, nearestNormal);
+  }
+
+  return std::make_tuple(Mesh::Intersection::MISS, nearestHit, nearestNormal);
+}
+
+
+glm::vec3 TriangleMesh::getNormal(const glm::vec3& position) const {
+
+  for(unsigned int i=0; i<verticies_.size(); i+=3) {
+    const bool b1 = sign(position, verticies_[i], verticies_[i+1]) < 0.0f;
+    const bool b2 = sign(position, verticies_[i+1], verticies_[i+2]) < 0.0f;
+    const bool b3 = sign(position, verticies_[i+2], verticies_[i]) < 0.0f;
+
+    if( (b1 == b2) && (b2 == b3) ) {
+      // std::cout << "AA" << std::endl;
+      glm::vec3 edge1 = verticies_[i+1] - verticies_[i];
+      glm::vec3 edge2 = verticies_[i+2] - verticies_[i]; 
+      return glm::normalize(glm::cross(edge1, edge2));
+    }
+  }
+
+  for(unsigned int i=0; i<verticies_.size(); i+=3) {
+   
+    const glm::vec3 v0 = verticies_[i+1] - verticies_[i];
+    const glm::vec3 v1 = verticies_[i+2] - verticies_[i];
+    const glm::vec3 v2 = position - verticies_[i];
+
+    // Compute dot products
+    const float dot00 = glm::dot(v0, v0);
+    const float dot01 = glm::dot(v0, v1);
+    const float dot02 = glm::dot(v0, v2);
+    const float dot11 = glm::dot(v1, v1);
+    const float dot12 = glm::dot(v1, v2);
+
+    // Compute barycentric coordinates
+    const float invDenom = 1.0f / (dot00 * dot11 - dot01 * dot01);
+    const float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    const float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    // if( (u >= 0) && (v >= 0) && (u + v < 1) ) {
+    if( (u + getEpsilon() >= 0.0f) && (v + getEpsilon() >= 0.0f) && (u + v <= 1.0f + getEpsilon()) ) {
+      // std::cout << "BB" << std::endl;
+      glm::vec3 edge1 = verticies_[i+1] - verticies_[i];
+      glm::vec3 edge2 = verticies_[i+2] - verticies_[i]; 
+      return glm::normalize(glm::cross(edge1, edge2));
+    }
+  }
+
+  // std::cout << "EH" << std::endl;
+  return glm::vec3(0.0f, 1.0f, 0.0f);
+}
+
+
 bool TriangleMesh::triangleIntersection(const Ray* ray, 
-                                        const glm::vec3 v1, 
-                                        const glm::vec3 v2, 
-                                        const glm::vec3 v3, 
-                                        glm::vec3& intersection) const {
+                                        const glm::vec3& v1, 
+                                        const glm::vec3& v2, 
+                                        const glm::vec3& v3, 
+                                        glm::vec3& intersection,
+                                        glm::vec3& normal) const {
 
   // Find vectors for two edges sharing v1
   const glm::vec3 e1 = v2 - v1;
@@ -53,8 +133,8 @@ bool TriangleMesh::triangleIntersection(const Ray* ray,
   const glm::vec3 D = ray->getDirection();
 
   // // Backface culling
-  // const glm::vec3 N = glm::cross(e1, e2);
-  // if( glm::dot(N, D) < 0 ) {
+  normal = glm::normalize(glm::cross(e1, e2));
+  // if( glm::dot(N, -D) <= getEpsilon() ) {
   //   return false;
   // }
 

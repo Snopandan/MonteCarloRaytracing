@@ -20,6 +20,8 @@ public:
   bool isLight() const { return isLight_; }
 
   virtual std::pair<Object::Intersection, glm::vec3> intersect(const Ray* ray) const;
+  virtual std::tuple<Object::Intersection, glm::vec3, glm::vec3> hit(const Ray* ray) const;
+
   virtual glm::vec3 getNormal(const glm::vec3& position) const { return mesh_->getNormal(position); }
   virtual glm::vec3 getRandomSurfacePosition() const { return mesh_->getRandomSurfacePosition(); }
   virtual glm::vec3 getIntensity() const { return glm::vec3{0.0f, 0.0f, 0.0f}; }

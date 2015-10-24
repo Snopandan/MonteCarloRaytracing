@@ -7,7 +7,7 @@
 
 class OpaqueObject : public Object {
 public:
-  OpaqueObject(Mesh* mesh, Brdf* brdf, const bool isLight = false, const glm::vec3& intensity = glm::vec3{0.0f, 0.0f, 0.0f});
+  OpaqueObject(Mesh* mesh, Brdf* brdf, const bool isLight = false, const glm::vec3& intensity = glm::vec3{1.0f, 1.0f, 1.0f});
   virtual ~OpaqueObject();
 
   float computeBrdf(glm::vec3 position, glm::vec2 incoming, glm::vec2 outgoing) const { return brdf_->compute(position, incoming, outgoing); }

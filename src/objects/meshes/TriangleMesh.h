@@ -10,6 +10,8 @@
 
 #include "Mesh.h"
 
+#include "utils/random.h"
+
 #define EPSILON 0.000001
 
 
@@ -21,13 +23,20 @@ public:
   virtual ~TriangleMesh() = default;
 
   std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
+  std::tuple<Mesh::Intersection, glm::vec3, glm::vec3> hit(const Ray* ray) const override;
+
+  glm::vec3 getNormal(const glm::vec3& position) const override;
 
 protected:
 
 private:
+  inline float sign(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3) const {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+  }
+
   const std::vector<glm::vec3> verticies_;
 
-  bool triangleIntersection(const Ray* ray, const glm::vec3 v1, const glm::vec3 v2, const glm::vec3 v3, glm::vec3& intersection) const;
+  bool triangleIntersection(const Ray* ray, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3& intersection, glm::vec3& normal) const;
 
 };
 
