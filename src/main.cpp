@@ -82,7 +82,8 @@ Scene createScene() {
   OpaqueObject* box2 = new OpaqueObject{"box2", new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
                                         new BrdfOrenNayar{0.8f, 0.5f}, 
                                         false,
-                                        glm::vec3{(float)240/(float)255, (float)247/(float)255, (float)34/(float)255}};
+                                        // glm::vec3{(float)240/(float)255, (float)247/(float)255, (float)34/(float)255}};
+                                        glm::vec3{(float)250/(float)255, (float)13/(float)255, (float)34/(float)255}};
 
   OpaqueObject* box3 = new OpaqueObject{"box3", new BoxMesh{glm::vec2{-5, 5}, glm::vec2{7, 8}, glm::vec2{2, 9}},
                                       new BrdfOrenNayar{0.8f, 0.5f}, 
@@ -104,12 +105,16 @@ Scene createScene() {
                                         false,
                                         glm::vec3{(float)255/(float)255, (float)63/(float)255, (float)51/(float)255}};
   // scene.add(box1);
-  // scene.add(box2);
+  scene.add(box2);
   // scene.add(box3);
 
   TransparentObject* sphere3 = new TransparentObject{"sphere3", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           1.55f, 0.9f};
+                                           1.2f, 0.98f};
   scene.add(sphere3);
+
+  TransparentObject* sphere4 = new TransparentObject{"sphere4", new SphereMesh{glm::vec3{3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+                                           1.1f, 0.98f};
+  scene.add(sphere4);
 
   TransparentObject* box4 = new TransparentObject{"box4", new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
                                         1.3f, 0.9f};
@@ -260,6 +265,10 @@ int main(const int argc, const char* argv[]) {
               float n1 = nodeRefractionIndex;
               float n2 = materialRefractionIndex;
 
+              if( node->isTransmitted() ) {
+                // std::cout << "Transmitted and Transparent!" << std::endl;
+              }
+
               if( nodeRefractionIndex == materialRefractionIndex 
                   && 
                   node->getLastIntersectedObject() == intersection.first ) {
@@ -284,21 +293,25 @@ int main(const int argc, const char* argv[]) {
 
               // TODO: Compute Fresnel in order to give the right porportions to the reflected and refracted part!
 
+              if( importance > 0.01f ) {
               const float reflectedImportance = importance * (1.0f - transparency);
               node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, 
                                           reflectedImportance, intersection.first, n2});
 
               const float refractedImportance = importance * transparency;
               node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, 
-                                          refractedImportance, intersection.first, n2});
+                                          refractedImportance, intersection.first, n2, true});
 
               traverse(node->getReflected());
 
               const float brewster = std::asin(n2 / n1);
+              // const float brewster = std::asin(n1 / n2);
               const float angle = std::acos(glm::dot(direction, normal));
-              if( angle <= brewster ) {
+              // if( angle <= brewster ) {
+                // std::cout << "GO!!" << std::endl;
                 traverse(node->getRefracted());
-              } 
+              // } 
+              // std::cout << "CODE!" << std::endl;
 
               // const glm::vec3 color = intersection.first->getIntensity();
               const glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -319,12 +332,18 @@ int main(const int argc, const char* argv[]) {
 
               delete node->getReflected();
               delete node->getRefracted();
+              }
 
             } else { // If intersecting object is opaque and not a light source
 
               const glm::vec2 randomAngles = getRandomAngles();
               
               if( !shouldTerminateRay(randomAngles.y, probabilityNotToTerminateRay) || node == root ) {
+
+                if( node->isTransmitted() ) {
+                  // std::cout << "Transmitted and OPAUE!!" << std::endl;
+                }
+
 
                 const glm::vec3 normal = intersection.first->getNormal(intersection.second);
                 const glm::vec3 direction = ray->getDirection();

@@ -6,7 +6,8 @@
 
 class Node {
 public:
-  Node(Ray* ray, const float importance, Object* lastIntersectedObject = nullptr, const float refractionIndex = 1.0f);
+  Node(Ray* ray, const float importance, Object* lastIntersectedObject = nullptr, const float refractionIndex = 1.0f,
+      const bool transmitted = false);
   virtual ~Node();
 
   void setReflected(Node* reflected);
@@ -24,6 +25,7 @@ public:
   Object* getLastIntersectedObject() const { return lastIntersectedObject_; }
   float getImportance() const { return importance_; }
   glm::vec3 getIntensity() const { return intensity_; }
+  bool isTransmitted() const { return transmitted_; }
 
 
 private:
@@ -34,5 +36,6 @@ private:
   float importance_;
   float refractionIndex_;
   glm::vec3 intensity_;
+  bool transmitted_;
 };
 #endif

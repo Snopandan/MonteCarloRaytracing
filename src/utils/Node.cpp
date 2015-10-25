@@ -1,6 +1,6 @@
 #include "Node.h"
 
-Node::Node(Ray* ray, const float importance, Object* lastIntersectedObject, const float refractionIndex)
+Node::Node(Ray* ray, const float importance, Object* lastIntersectedObject, const float refractionIndex, const bool transmitted)
 : ray_(ray)
 , importance_(importance)
 , reflected_(nullptr)
@@ -8,6 +8,7 @@ Node::Node(Ray* ray, const float importance, Object* lastIntersectedObject, cons
 , lastIntersectedObject_{lastIntersectedObject}
 , refractionIndex_(refractionIndex)
 , intensity_{glm::vec3{0.0f, 0.0f, 0.0f}}
+, transmitted_{transmitted}
 {
 
 }

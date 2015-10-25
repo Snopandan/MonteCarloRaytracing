@@ -39,8 +39,8 @@ std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(const 
 
       sMin = (numeratorFirstPart - sqrtNumeratorSecondPart) * denominatorInverse;
       sMax = (numeratorFirstPart + sqrtNumeratorSecondPart) * denominatorInverse;
-      std::cout << "Smin: " << sMin << std::endl;
-      std::cout << "Smax: " << sMax << std::endl;
+      // std::cout << "Smin: " << sMin << std::endl;
+      // std::cout << "Smax: " << sMax << std::endl;
 
       if (sMax < 0) {
         return std::make_tuple(Mesh::Intersection::MISS, sMax, sMin);
