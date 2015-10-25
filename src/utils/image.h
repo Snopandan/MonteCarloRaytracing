@@ -20,4 +20,13 @@ inline void outputImage(const std::string& file,
 }
 
 
+inline glm::vec3 checker(const glm::vec3& uv, const glm::vec3& color0, const glm::vec3& color1) {
+  if( (int(floor(uv.x) + floor(uv.y) + floor(uv.z)) & 1 ) == 0) {
+    return color0;
+  } else {
+    return color1;
+  }
+}
+
+
 #endif // IMAGE_H

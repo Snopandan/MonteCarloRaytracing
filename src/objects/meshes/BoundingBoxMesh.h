@@ -13,6 +13,9 @@ public:
   using BoxMesh::BoxMesh;
 
   virtual glm::vec3 getNormal(const glm::vec3& position) const override;
+
+  virtual glm::vec3 getColor(const glm::vec3& position) const override;
+  
 };
 
 

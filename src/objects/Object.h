@@ -24,6 +24,7 @@ public:
   virtual glm::vec3 getNormal(const glm::vec3& position) const { return mesh_->getNormal(position); }
   virtual glm::vec3 getRandomSurfacePosition() const { return mesh_->getRandomSurfacePosition(); }
   virtual glm::vec3 getIntensity() const { return glm::vec3{0.0f, 0.0f, 0.0f}; }
+  virtual glm::vec3 getColor(const glm::vec3& position) const { return mesh_->getColor(position); }
   virtual float getArea() const { return mesh_->getArea(); }
   virtual std::string getName() const { return name_; }
 

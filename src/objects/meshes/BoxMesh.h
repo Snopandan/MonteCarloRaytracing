@@ -8,6 +8,7 @@
 
 #include "Mesh.h"
 #include "utils/random.h"
+#include "utils/image.h"
 
 
 class BoxMesh : public Mesh {

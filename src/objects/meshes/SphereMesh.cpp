@@ -4,8 +4,8 @@ SphereMesh::SphereMesh(const glm::vec3 position, const float radius)
 : position_{position}
 , radius_{radius}
 , radiusPow2_{std::pow(radius, 2)}
+, area_{4.0f * M_PI * std::pow(radius, 2)}
 {
-
 }
 
 SphereMesh::~SphereMesh() {
@@ -59,4 +59,13 @@ std::tuple<Mesh::Intersection, float, float> SphereMesh::getIntersections(const 
 
 glm::vec3 SphereMesh::getNormal(const glm::vec3& position) const {
   return glm::normalize(position - position_);
+}
+
+glm::vec3 SphereMesh::getRandomSurfacePosition() const {
+  const glm::vec2 randomAngles = getRandomAngles();
+
+  const glm::vec3 position = glm::vec3{radius_ * std::sin(randomAngles.x) * std::cos(randomAngles.y),
+                                       radius_ * std::sin(randomAngles.x) * std::sin(randomAngles.y),
+                                       radius_ * std::cos(randomAngles.x)};
+  return position_ + position;
 }

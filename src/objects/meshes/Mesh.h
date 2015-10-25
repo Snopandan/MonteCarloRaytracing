@@ -23,6 +23,7 @@ public:
   virtual glm::vec3 getRandomSurfacePosition() const { throw std::invalid_argument{"getRandomSurfacePosition() not implemented"};
                                                        return glm::vec3{0,0,0}; }
   virtual float getArea() const { throw std::invalid_argument{"getArea() not implemented"}; return 1.0f; }
+  virtual glm::vec3 getColor(const glm::vec3& position) const { return glm::vec3{1.0f, 1.0f, 1.0f}; }
 
 private:
 
