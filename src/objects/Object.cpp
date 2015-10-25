@@ -1,7 +1,7 @@
 #include "Object.h"
 
-Object::Object(Mesh* mesh, const bool isTransparent, const bool isLight)
-: mesh_(mesh), isTransparent_(isTransparent), isLight_{isLight} {
+Object::Object(const std::string& name, Mesh* mesh, const bool isTransparent, const bool isLight)
+: name_{name}, mesh_(mesh), isTransparent_(isTransparent), isLight_{isLight} {
 
 }
 

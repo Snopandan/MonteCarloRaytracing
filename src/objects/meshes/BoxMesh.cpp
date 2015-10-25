@@ -59,6 +59,7 @@ std::tuple<Mesh::Intersection, float, float> BoxMesh::getIntersections(const Ray
 
 }
 
+
 glm::vec3 BoxMesh::getNormal(const glm::vec3& position) const {
 
   // Bakom

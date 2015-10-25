@@ -78,7 +78,7 @@ std::tuple<Mesh::Intersection, float, float> OrtPlaneMesh::getIntersections(cons
     // std::cout << "direction: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
     // std::cout << "point: " << point.x << " " << point.y << " " << point.z << std::endl;
 
-    return std::make_tuple(Mesh::Intersection::SINGLE_HIT, sMin, sMax);
+    return std::make_tuple(Mesh::Intersection::SINGLE_HIT, t, sMax);
   }
 
   // std::cout << "MISS!" << std::endl;

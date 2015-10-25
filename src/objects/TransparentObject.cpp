@@ -1,7 +1,7 @@
 #include "TransparentObject.h"
 
-TransparentObject::TransparentObject(Mesh* mesh, const float refractionIndex, const float transparancy)
-: Object(mesh, true, false)
+TransparentObject::TransparentObject(const std::string& name, Mesh* mesh, const float refractionIndex, const float transparancy)
+: Object(name, mesh, true, false)
 , refractionIndex_{refractionIndex}
 , transparancy_{transparancy} {
 
