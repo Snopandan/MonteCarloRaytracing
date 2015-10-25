@@ -1,7 +1,7 @@
 #include "OpaqueObject.h"
 
-OpaqueObject::OpaqueObject(Mesh* mesh, Brdf* brdf, const bool isLight, const glm::vec3& intensity)
-: Object(mesh, false, isLight), brdf_(brdf), intensity_{intensity} {
+OpaqueObject::OpaqueObject(const std::string& name, Mesh* mesh, Brdf* brdf, const bool isLight, const glm::vec3& intensity)
+: Object(name, mesh, false, isLight), brdf_(brdf), intensity_{intensity} {
 
 }
 

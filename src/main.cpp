@@ -42,11 +42,14 @@
 Scene createScene() {
   Scene scene;
 
-  OpaqueObject* boundingBox = new OpaqueObject{new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
-                                              new BrdfOrenNayar{0.8f, 0.5f}}; 
+  OpaqueObject* boundingBox = new OpaqueObject{"boundingBox", new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
+                                              // new BrdfOrenNayar{0.8f, 0.5f},
+                                              new BrdfLambertian{1.0f},
+                                              false,
+                                               glm::vec3{0.5f, 0.8f, 0.5f}}; 
   scene.add(boundingBox);
 
-  OpaqueObject* lightPlane1 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{2, 2, 8},    // upperLeftCorner
+  OpaqueObject* lightPlane1 = new OpaqueObject{"lightPlane1", new OrtPlaneMesh{glm::vec3{2, 2, 8},    // upperLeftCorner
                                                                 glm::vec3{2, -2, 8},   // lowerLeftCorner 
                                                                 glm::vec3{-2, -2, 8}}, // lowerRightCorner
                                                new BrdfLambertian{1.0f},
@@ -54,7 +57,7 @@ Scene createScene() {
                                                glm::vec3{1.0f, 0.0f, 0.0f}};
   // scene.add(lightPlane1);
 
-  OpaqueObject* lightPlane2 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{-8, 1, 6},  // upperLeftCorner
+  OpaqueObject* lightPlane2 = new OpaqueObject{"lightPlane2", new OrtPlaneMesh{glm::vec3{-8, 1, 6},  // upperLeftCorner
                                                                 glm::vec3{-8, -1, 6},  // lowerLeftCorner 
                                                                 glm::vec3{-8, -1, 4}}, // lowerRightCorner
                                                new BrdfLambertian{1.0f},
@@ -62,7 +65,7 @@ Scene createScene() {
                                                glm::vec3{0.0f, 0.0f, 1.0f}};
   // scene.add(lightPlane2);
 
-  OpaqueObject* lightPlane3 = new OpaqueObject{new OrtPlaneMesh{glm::vec3{2,9,  -2+6},    // upperLeftCorner
+  OpaqueObject* lightPlane3 = new OpaqueObject{"lightPlane3", new OrtPlaneMesh{glm::vec3{2,9,  -2+6},    // upperLeftCorner
                                                                 glm::vec3{2, 9, 2+6},   // lowerLeftCorner 
                                                                 glm::vec3{-2, 9, 2+6}}, // lowerRightCorner
                                                new BrdfLambertian{1.0f},
@@ -71,68 +74,84 @@ Scene createScene() {
                                                
   scene.add(lightPlane3);
 
-  OpaqueObject* sphere1 = new OpaqueObject{new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+  OpaqueObject* sphere1 = new OpaqueObject{"sphere1", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
                                            new BrdfOrenNayar{0.8f, 0.1f},
                                            false,
                                            glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
 
-  OpaqueObject* box2 = new OpaqueObject{new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
+  OpaqueObject* box2 = new OpaqueObject{"box2", new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
                                         new BrdfOrenNayar{0.8f, 0.5f}, 
                                         false,
                                         glm::vec3{(float)240/(float)255, (float)247/(float)255, (float)34/(float)255}};
-  scene.add(box2);
 
-  scene.add(sphere1);
+  OpaqueObject* box3 = new OpaqueObject{"box3", new BoxMesh{glm::vec2{-5, 5}, glm::vec2{7, 8}, glm::vec2{2, 9}},
+                                      new BrdfOrenNayar{0.8f, 0.5f}, 
+                                      false,
+                                      glm::vec3{(float)17/(float)255, (float)255/(float)255, (float)51/(float)155}};
+  // scene.add(box2);
+  // scene.add(box3);
 
-  OpaqueObject* sphere2 = new OpaqueObject{new SphereMesh{glm::vec3{3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+  // scene.add(sphere1);
+
+  OpaqueObject* sphere2 = new OpaqueObject{"sphere2", new SphereMesh{glm::vec3{3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
                                            new BrdfLambertian{0.8f},
                                            false,
                                            glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
-  scene.add(sphere2);
+  // scene.add(sphere2);
 
-  OpaqueObject* box1 = new OpaqueObject{new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
+  OpaqueObject* box1 = new OpaqueObject{"box1", new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
                                         new BrdfOrenNayar{0.8f, 0.5f}, 
                                         false,
-                                        glm::vec3{(float)255/(float)255, (float)153/(float)255, (float)51/(float)255}};
-  scene.add(box1);
+                                        glm::vec3{(float)255/(float)255, (float)63/(float)255, (float)51/(float)255}};
+  // scene.add(box1);
+  // scene.add(box2);
+  // scene.add(box3);
 
-  std::vector<glm::vec3> pyramid1Vertices;
-  const float pyramid1Scale = 2.0f;
+  TransparentObject* sphere3 = new TransparentObject{"sphere3", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+                                           1.55f, 0.9f};
+  scene.add(sphere3);
+
+  TransparentObject* box4 = new TransparentObject{"box4", new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
+                                        1.3f, 0.9f};
+  // scene.add(box4);
+
+  // std::vector<glm::vec3> pyramid1Vertices;
+  // const float pyramid1Scale = 2.0f;
   
-  const glm::mat4 rotation2 = glm::rotate(-0.4f, glm::vec3{0.0f, 1.0f, 0.0f});
-  glm::mat3 pyramid1Rotaton = computeRotationMatrix(glm::normalize(glm::vec3{0.0f, 0.1f, 1.0f}));
+  // const glm::mat4 rotation2 = glm::rotate(-0.4f, glm::vec3{0.0f, 1.0f, 0.0f});
+  // glm::mat3 pyramid1Rotaton = computeRotationMatrix(glm::normalize(glm::vec3{0.0f, 0.1f, 1.0f}));
 
-  pyramid1Rotaton[0][0] = rotation2[0][0];     pyramid1Rotaton[0][1] = rotation2[0][1];     pyramid1Rotaton[0][2] = rotation2[0][2];     
-  pyramid1Rotaton[1][0] = rotation2[1][0];     pyramid1Rotaton[1][1] = rotation2[1][1];     pyramid1Rotaton[1][2] = rotation2[1][2];     
-  pyramid1Rotaton[2][0] = rotation2[2][0];     pyramid1Rotaton[2][1] = rotation2[2][1];     pyramid1Rotaton[2][2] = rotation2[2][2];   // const glm::mat3 pyramid1Rotaton = glm::mat3{1.0f};
+  // pyramid1Rotaton[0][0] = rotation2[0][0];     pyramid1Rotaton[0][1] = rotation2[0][1];     pyramid1Rotaton[0][2] = rotation2[0][2];     
+  // pyramid1Rotaton[1][0] = rotation2[1][0];     pyramid1Rotaton[1][1] = rotation2[1][1];     pyramid1Rotaton[1][2] = rotation2[1][2];     
+  // pyramid1Rotaton[2][0] = rotation2[2][0];     pyramid1Rotaton[2][1] = rotation2[2][1];     pyramid1Rotaton[2][2] = rotation2[2][2];   // const glm::mat3 pyramid1Rotaton = glm::mat3{1.0f};
 
-  // pyramid1Rotaton = glm::mat3{1.0f};
+  // // pyramid1Rotaton = glm::mat3{1.0f};
 
-  // const glm::vec3 pyramid1Translation = glm::vec3{-3.0f, -10, -1.0f};
-  // const glm::vec3 pyramid1Translation = glm::vec3{-4.0f, 5.0f, -3.0f};
-  const glm::vec3 pyramid1Translation = glm::vec3{0.0f,-10.0f,0.0f};
-  // const glm::vec3 pyramid1Translation = glm::vec3{0.0f,0.0f,0.0f};
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation);
+  // // const glm::vec3 pyramid1Translation = glm::vec3{-3.0f, -10, -1.0f};
+  // // const glm::vec3 pyramid1Translation = glm::vec3{-4.0f, 5.0f, -3.0f};
+  // const glm::vec3 pyramid1Translation = glm::vec3{0.0f,-10.0f,0.0f};
+  // // const glm::vec3 pyramid1Translation = glm::vec3{0.0f,0.0f,0.0f};
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation);
 
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 4.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 4.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
 
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 4.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 4.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
 
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
-  pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{0.0f, 0.0f, 0.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{-2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
+  // pyramid1Vertices.push_back(pyramid1Rotaton * (glm::vec3{2.0f, 0.0f, 2.0f}*pyramid1Scale) + pyramid1Translation );
 
-  OpaqueObject* pyramid1 = new OpaqueObject{new TriangleMesh{pyramid1Vertices},
-                                            new BrdfOrenNayar{0.8f, 0.5f}, 
-                                            false,
-                                            glm::vec3{(float)255/(float)255, (float)16/(float)255, (float)244/(float)255}};
-  scene.add(pyramid1);
+  // OpaqueObject* pyramid1 = new OpaqueObject{"pyramid1", new TriangleMesh{pyramid1Vertices},
+  //                                           new BrdfOrenNayar{0.8f, 0.5f}, 
+  //                                           false,
+  //                                           glm::vec3{(float)255/(float)255, (float)16/(float)255, (float)244/(float)255}};
+  // scene.add(pyramid1);
 
 
   scene.complete();
@@ -230,7 +249,7 @@ int main(const int argc, const char* argv[]) {
 
               const glm::vec3 origin = ray->getOrigin();
               const glm::vec3 direction = ray->getDirection();
-              const glm::vec3 normal = intersection.first->getNormal(intersection.second);
+              glm::vec3 normal = intersection.first->getNormal(intersection.second);
               const glm::vec3 viewDirection = glm::normalize(origin); // TODO?: camera not always in origin
 
               const glm::vec3 reflection = glm::reflect(direction, normal);
@@ -241,13 +260,21 @@ int main(const int argc, const char* argv[]) {
               float n1 = nodeRefractionIndex;
               float n2 = materialRefractionIndex;
 
-              if( nodeRefractionIndex == materialRefractionIndex && node->getLastIntersectedObject() == intersection.first ) {
+              if( nodeRefractionIndex == materialRefractionIndex 
+                  && 
+                  node->getLastIntersectedObject() == intersection.first ) {
+
                 n1 = materialRefractionIndex;
                 n2 = 1.0f; // Air
+                // std::cout << "HEJ!" << std::endl;
+                normal = -normal;
               } 
 
               const float refractionIndexRatio = n1 / n2; 
               const glm::vec3 refraction = glm::refract(direction, normal, refractionIndexRatio);
+
+              // std::cout << "refraction: " << refraction.x << " " << refraction.y << " " << refraction.z << std::endl;
+              // std::cout << "refractionIndexRatio: " << refractionIndexRatio << std::endl;
 
               const float importance = node->getImportance();
               const float transparency = dynamic_cast<TransparentObject*>(intersection.first)->getTransparancy();
@@ -256,17 +283,38 @@ int main(const int argc, const char* argv[]) {
               const glm::vec3 newRefractedOrigin = intersection.second + (direction - normal) * getEpsilon();
 
               // TODO: Compute Fresnel in order to give the right porportions to the reflected and refracted part!
-              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, importance * (1.0f - transparency), intersection.first, n2});
-              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, importance * transparency, intersection.first, n2});
+
+              const float reflectedImportance = importance * (1.0f - transparency);
+              node->setReflected(new Node{new Ray{newReflectedOrigin, reflection}, 
+                                          reflectedImportance, intersection.first, n2});
+
+              const float refractedImportance = importance * transparency;
+              node->setRefracted(new Node{new Ray{newRefractedOrigin, refraction}, 
+                                          refractedImportance, intersection.first, n2});
 
               traverse(node->getReflected());
-              traverse(node->getRefracted());
+
+              const float brewster = std::asin(n2 / n1);
+              const float angle = std::acos(glm::dot(direction, normal));
+              if( angle <= brewster ) {
+                traverse(node->getRefracted());
+              } 
+
+              // const glm::vec3 color = intersection.first->getIntensity();
+              const glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
+              const glm::vec3 intensity = (node->getReflected()->getIntensity() * reflectedImportance 
+                                        + node->getRefracted()->getIntensity() * refractedImportance) / importance ;
+              // const glm::vec3 intensity = childImportance / (probabilityNotToTerminateRay * importance) *
+              //                             node->getRefracted()->getIntensity();
+
+              node->setIntensity(intensity * color);
+              // node->setIntensity(intensity);
 
 
-              const float r_zero = std::pow(((n1 - n2) / (n1 + n2)), 2);
-              const float cos_theata = glm::dot(reflection, -viewDirection);
+              // const float r_zero = std::pow(((n1 - n2) / (n1 + n2)), 2);
+              // const float cos_theata = glm::dot(reflection, -viewDirection);
 
-              const float fresnel = computeFresnel(cos_theata, r_zero);
+              // const float fresnel = computeFresnel(cos_theata, r_zero);
 
 
               delete node->getReflected();
