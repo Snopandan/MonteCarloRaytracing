@@ -1,0 +1,9 @@
+
+name = "testars";
+
+width = 800;
+height = 600;
+
+numberOfSamples = 1;
+numberOfShadowRays = 1;
+probabilityNotToTerminateRay = 0.5f;

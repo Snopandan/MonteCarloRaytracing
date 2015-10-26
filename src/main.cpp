@@ -43,8 +43,8 @@
 
 #include "parser/Parser.h"
 #include "parser/OBJParser.h"
-// #include "parser/OBJGroup.h"
-// #include "parser/OBJMaterial.h"
+#include "parser/Config.h"
+
 
 Scene createScene() {
   Scene scene;
@@ -129,12 +129,18 @@ int main(const int argc, const char* argv[]) {
 
   const auto startTime = std::chrono::high_resolution_clock::now();
 
-  const unsigned int width = 800;
-  const unsigned int height = 600;
-  const unsigned int numberOfSamples = 10;
-  const unsigned int numberOfShadowRays = 2;
-  const float probabilityNotToTerminateRay = 0.9f;
+  Config& config = Config::getInstance();
 
+  const unsigned int width = config.getValue<unsigned int>("width");
+  const unsigned int height = config.getValue<unsigned int>("height");
+  const unsigned int numberOfSamples = config.getValue<unsigned int>("numberOfSamples");
+  const unsigned int numberOfShadowRays = config.getValue<unsigned int>("numberOfShadowRays");
+  const float probabilityNotToTerminateRay = config.getValue<float>("probabilityNotToTerminateRay");
+  std::cout << "width: " << width << std::endl;
+  std::cout << "height: " << height << std::endl;
+  std::cout << "numberOfSamples: " << numberOfSamples << std::endl;
+  std::cout << "numberOfShadowRays: " << numberOfShadowRays << std::endl;
+  std::cout << "probabilityNotToTerminateRay: " << probabilityNotToTerminateRay << std::endl;
   const glm::mat4 rotation2 = glm::rotate(-0.1f, glm::vec3{1.0f, 0.0f, 0.0f});
   glm::mat3 rotation = computeRotationMatrix(glm::normalize(glm::vec3{0.0f, 0.1f, 1.0f}));
 
@@ -171,7 +177,7 @@ int main(const int argc, const char* argv[]) {
 
   for(unsigned x = 0; x < width; x++) {
     WorkItem* workItem = new WorkItem([&probabilityNotToTerminateRay, &update, &globalMaxIntensity, &globalMinIntensity, &columnCounter, 
-                                       &image, &scene, &rays, &rootImportance, &numberOfSamples, &numberOfShadowRays, x]() {
+                                       &image, &scene, &rays, &rootImportance, &numberOfSamples, &numberOfShadowRays, &height, &width, x]() {
 
       glm::vec3 localMaxIntensity{0.0f, 0.0f, 0.0f};
       glm::vec3 localMinIntensity{0.0f, 0.0f, 0.0f};
@@ -398,7 +404,7 @@ int main(const int argc, const char* argv[]) {
   // std::cout << "globalMinIntensity: " << globalMinIntensity.r << " " << globalMinIntensity.g << " " << globalMinIntensity.b << std::endl;
   // std::cout << "globalMaxIntensity: " << globalMaxIntensity.r << " " << globalMaxIntensity.g << " " << globalMaxIntensity.b << std::endl;
 
-  std::string file = "test";
+  std::string file = config.getValue<std::string>("name");
   if( argc == 2 ) {
     file = argv[1];
   }
