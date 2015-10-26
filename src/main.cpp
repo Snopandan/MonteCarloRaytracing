@@ -42,93 +42,93 @@
 Scene createScene() {
   Scene scene;
 
-  OpaqueObject* boundingBox = new OpaqueObject{"boundingBox", new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
-                                              // new BrdfOrenNayar{0.8f, 0.5f},
-                                              new BrdfLambertian{1.0f},
-                                              false,
-                                               glm::vec3{1.0f, 1.0f, 1.0f}};
-  scene.add(boundingBox);
-
-  OpaqueObject* lightPlane1 = new OpaqueObject{"lightPlane1", new OrtPlaneMesh{glm::vec3{2, 2, 8},    // upperLeftCorner
-                                                                glm::vec3{2, -2, 8},   // lowerLeftCorner
-                                                                glm::vec3{-2, -2, 8}}, // lowerRightCorner
-                                               new BrdfLambertian{1.0f},
-                                               true,
-                                               glm::vec3{1.0f, 0.0f, 0.0f}};
-  // scene.add(lightPlane1);
-
-  OpaqueObject* lightPlane2 = new OpaqueObject{"lightPlane2", new OrtPlaneMesh{glm::vec3{-8, 1, 6},  // upperLeftCorner
-                                                                glm::vec3{-8, -1, 6},  // lowerLeftCorner
-                                                                glm::vec3{-8, -1, 4}}, // lowerRightCorner
-                                               new BrdfLambertian{1.0f},
-                                               true,
-                                               glm::vec3{0.0f, 0.0f, 1.0f}};
-  // scene.add(lightPlane2);
-
-  OpaqueObject* lightPlane3 = new OpaqueObject{"lightPlane3", new OrtPlaneMesh{glm::vec3{2,9,  -2+6},    // upperLeftCorner
-                                                                glm::vec3{2, 9, 2+6},   // lowerLeftCorner
-                                                                glm::vec3{-2, 9, 2+6}}, // lowerRightCorner
-                                               new BrdfLambertian{1.0f},
-                                               true,
-                                               3.0f * glm::vec3{1.0f, 1.0f, 1.0f}};
-
-  scene.add(lightPlane3);
-
-  OpaqueObject* sphere1 = new OpaqueObject{"sphere1", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           new BrdfOrenNayar{0.8f, 0.1f},
-                                           false,
-                                           glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
-
-  OpaqueObject* box2 = new OpaqueObject{"box2", new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
-                                        new BrdfOrenNayar{0.8f, 0.5f},
-                                        false,
-                                        // glm::vec3{(float)240/(float)255, (float)247/(float)255, (float)34/(float)255}};
-                                        glm::vec3{(float)250/(float)255, (float)13/(float)255, (float)34/(float)255}};
-
-  OpaqueObject* box3 = new OpaqueObject{"box3", new BoxMesh{glm::vec2{-5, 5}, glm::vec2{7, 8}, glm::vec2{2, 9}},
-                                      new BrdfOrenNayar{0.8f, 0.5f},
-                                      false,
-                                      glm::vec3{(float)17/(float)255, (float)255/(float)255, (float)51/(float)155}};
-  // scene.add(box2);
-  // scene.add(box3);
-
-  // scene.add(sphere1);
-
-  OpaqueObject* sphere2 = new OpaqueObject{"sphere2", new SphereMesh{glm::vec3{3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           new BrdfLambertian{0.8f},
-                                           false,
-                                           glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
-
-  OpaqueObject* box1 = new OpaqueObject{"box1", new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
-                                        new BrdfOrenNayar{0.8f, 0.5f},
-                                        false,
-                                        glm::vec3{(float)255/(float)255, (float)63/(float)255, (float)51/(float)255}};
-  // scene.add(box2);
-
-  TransparentObject* sphere3 = new TransparentObject{"sphere3", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           1.2f, 0.98f};
-  // scene.add(sphere3);
-
-  TransparentObject* sphere4 = new TransparentObject{"sphere4", new SphereMesh{glm::vec3{6.0f, -6.9f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           1.1f, 0.9f};
-                                           // 1.1f, 0.68f};
-  scene.add(sphere4);
-
-  TransparentObject* box4 = new TransparentObject{"box4", new BoxMesh{glm::vec2{-7, -5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
-                                        1.1f, 0.5f};
-
-  // scene.add(box4);
-
-  OpaqueObject* sphere5 = new OpaqueObject{"sphere5", new SphereMesh{glm::vec3{8.5f, 4.0f, 2.0f}, 0.5f}, // lowerRightCorner
-                                           new BrdfLambertian{1.0f},
-                                           true,
-                                           1.0f * glm::vec3{(float)255/(float)255, (float)255/(float)255, (float)255/(float)255}};
-  // scene.add(sphere5);
-
-  TransparentObject* sphere6 = new TransparentObject{"sphere6", new SphereMesh{glm::vec3{-6.0f, -6.9f, 3.0f}, 3.0f}, // lowerRightCorner
-                                           1.0f, 0.0f};
-                                           // 1.05f, 0.68f};
-  scene.add(sphere6);
+  // OpaqueObject* boundingBox = new OpaqueObject{"boundingBox", new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
+  //                                             // new BrdfOrenNayar{0.8f, 0.5f},
+  //                                             new BrdfLambertian{1.0f},
+  //                                             false,
+  //                                              glm::vec3{1.0f, 1.0f, 1.0f}};
+  // scene.add(boundingBox);
+  //
+  // OpaqueObject* lightPlane1 = new OpaqueObject{"lightPlane1", new OrtPlaneMesh{glm::vec3{2, 2, 8},    // upperLeftCorner
+  //                                                               glm::vec3{2, -2, 8},   // lowerLeftCorner
+  //                                                               glm::vec3{-2, -2, 8}}, // lowerRightCorner
+  //                                              new BrdfLambertian{1.0f},
+  //                                              true,
+  //                                              glm::vec3{1.0f, 0.0f, 0.0f}};
+  // // scene.add(lightPlane1);
+  //
+  // OpaqueObject* lightPlane2 = new OpaqueObject{"lightPlane2", new OrtPlaneMesh{glm::vec3{-8, 1, 6},  // upperLeftCorner
+  //                                                               glm::vec3{-8, -1, 6},  // lowerLeftCorner
+  //                                                               glm::vec3{-8, -1, 4}}, // lowerRightCorner
+  //                                              new BrdfLambertian{1.0f},
+  //                                              true,
+  //                                              glm::vec3{0.0f, 0.0f, 1.0f}};
+  // // scene.add(lightPlane2);
+  //
+  // OpaqueObject* lightPlane3 = new OpaqueObject{"lightPlane3", new OrtPlaneMesh{glm::vec3{2,9,  -2+6},    // upperLeftCorner
+  //                                                               glm::vec3{2, 9, 2+6},   // lowerLeftCorner
+  //                                                               glm::vec3{-2, 9, 2+6}}, // lowerRightCorner
+  //                                              new BrdfLambertian{1.0f},
+  //                                              true,
+  //                                              3.0f * glm::vec3{1.0f, 1.0f, 1.0f}};
+  //
+  // scene.add(lightPlane3);
+  //
+  // OpaqueObject* sphere1 = new OpaqueObject{"sphere1", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+  //                                          new BrdfOrenNayar{0.8f, 0.1f},
+  //                                          false,
+  //                                          glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
+  //
+  // OpaqueObject* box2 = new OpaqueObject{"box2", new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
+  //                                       new BrdfOrenNayar{0.8f, 0.5f},
+  //                                       false,
+  //                                       // glm::vec3{(float)240/(float)255, (float)247/(float)255, (float)34/(float)255}};
+  //                                       glm::vec3{(float)250/(float)255, (float)13/(float)255, (float)34/(float)255}};
+  //
+  // OpaqueObject* box3 = new OpaqueObject{"box3", new BoxMesh{glm::vec2{-5, 5}, glm::vec2{7, 8}, glm::vec2{2, 9}},
+  //                                     new BrdfOrenNayar{0.8f, 0.5f},
+  //                                     false,
+  //                                     glm::vec3{(float)17/(float)255, (float)255/(float)255, (float)51/(float)155}};
+  // // scene.add(box2);
+  // // scene.add(box3);
+  //
+  // // scene.add(sphere1);
+  //
+  // OpaqueObject* sphere2 = new OpaqueObject{"sphere2", new SphereMesh{glm::vec3{3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+  //                                          new BrdfLambertian{0.8f},
+  //                                          false,
+  //                                          glm::vec3{(float)51/(float)255, (float)153/(float)255, (float)255/(float)255}};
+  //
+  // OpaqueObject* box1 = new OpaqueObject{"box1", new BoxMesh{glm::vec2{3, 5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
+  //                                       new BrdfOrenNayar{0.8f, 0.5f},
+  //                                       false,
+  //                                       glm::vec3{(float)255/(float)255, (float)63/(float)255, (float)51/(float)255}};
+  // // scene.add(box2);
+  //
+  // TransparentObject* sphere3 = new TransparentObject{"sphere3", new SphereMesh{glm::vec3{-3.5f, -7.0f, 3.0f}, 3.0f}, // lowerRightCorner
+  //                                          1.2f, 0.98f};
+  // // scene.add(sphere3);
+  //
+  // TransparentObject* sphere4 = new TransparentObject{"sphere4", new SphereMesh{glm::vec3{6.0f, -6.9f, 3.0f}, 3.0f}, // lowerRightCorner
+  //                                          1.1f, 0.9f};
+  //                                          // 1.1f, 0.68f};
+  // scene.add(sphere4);
+  //
+  // TransparentObject* box4 = new TransparentObject{"box4", new BoxMesh{glm::vec2{-7, -5}, glm::vec2{-10, -8}, glm::vec2{-3, -1}},
+  //                                       1.1f, 0.5f};
+  //
+  // // scene.add(box4);
+  //
+  // OpaqueObject* sphere5 = new OpaqueObject{"sphere5", new SphereMesh{glm::vec3{8.5f, 4.0f, 2.0f}, 0.5f}, // lowerRightCorner
+  //                                          new BrdfLambertian{1.0f},
+  //                                          true,
+  //                                          1.0f * glm::vec3{(float)255/(float)255, (float)255/(float)255, (float)255/(float)255}};
+  // // scene.add(sphere5);
+  //
+  // TransparentObject* sphere6 = new TransparentObject{"sphere6", new SphereMesh{glm::vec3{-6.0f, -6.9f, 3.0f}, 3.0f}, // lowerRightCorner
+  //                                          1.0f, 0.0f};
+  //                                          // 1.05f, 0.68f};
+  // scene.add(sphere6);
 
   // std::vector<glm::vec3> pyramid1Vertices;
   // const float pyramid1Scale = 2.0f;
@@ -169,6 +169,42 @@ Scene createScene() {
   // scene.add(pyramid1);
 
 
+
+  OpaqueObject* boundingBox = new OpaqueObject{"boundingBox", new BoundingBoxMesh{glm::vec2{-10, 10}, glm::vec2{-10, 10}, glm::vec2{-10, 10}},
+                                              new BrdfLambertian{0.8f},
+                                              false,
+                                               glm::vec3{1.0f, 1.0f, 1.0f}};
+   scene.add(boundingBox);
+
+  OpaqueObject* lightPlane = new OpaqueObject{"lightPlane", new OrtPlaneMesh{glm::vec3{2,9,  -2+6},    // upperLeftCorner
+                                                                glm::vec3{2, 9, 2+6},   // lowerLeftCorner
+                                                                glm::vec3{-2, 9, 2+6}}, // lowerRightCorner
+                                               new BrdfLambertian{1.0f},
+                                               true,
+                                               30.0f * glm::vec3{1.0f, 1.0f, 1.0f}};
+
+  scene.add(lightPlane);
+
+  OpaqueObject* leftbackcornerbox = new OpaqueObject{"leftbackcornerbox", new BoxMesh{glm::vec2{-9, -4}, glm::vec2{-10, 5}, glm::vec2{7, 9.5}},
+                                        new BrdfOrenNayar{0.8f, 0.3f},
+                                        false,
+                                        glm::vec3{(float)219/(float)255, (float)191/(float)255, (float)7/(float)255}};
+  // scene.add(leftbackcornerbox);
+
+  OpaqueObject* leftwallbox = new OpaqueObject{"leftbackcornerbox", new BoxMesh{glm::vec2{7, 2}, glm::vec2{-10, -7}, glm::vec2{0, 5}},
+                                        new BrdfLambertian{0.8f},
+                                        false,
+                                        glm::vec3{(float)7/(float)255, (float)219/(float)255, (float)35/(float)255}};
+  // scene.add(leftwallbox);
+
+  TransparentObject* reflectivesphereonbox = new TransparentObject{"reflectivesphereonbox", new SphereMesh{glm::vec3{4.5f, -4.1f, 2.5f}, 3.0f}, // lowerRightCorner
+                                              1.5f, 0.1f};
+  // scene.add(reflectivesphereonbox);
+
+  TransparentObject* transparentsphere= new TransparentObject{"transparentsphere", new SphereMesh{glm::vec3{-3.0f, -7.1f, 1.0f}, 3.0f}, // lowerRightCorner
+                                              1.5f, 0.9f};
+  // scene.add(transparentsphere);
+
   scene.complete();
 
   return scene;
@@ -186,7 +222,7 @@ int main(const int argc, const char* argv[]) {
 
   const unsigned int width = 800;
   const unsigned int height = 600;
-  const unsigned int numberOfSamples = 32;
+  const unsigned int numberOfSamples = 64;
   const unsigned int numberOfShadowRays = 1;
   const float probabilityNotToTerminateRay = 0.5f;
 
