@@ -6,7 +6,7 @@
 
 class TransparentObject : public Object{
 public:
-  TransparentObject(const std::string& name, Mesh* mesh, const float refractionIndex, const float transparancy = 0.5);
+  TransparentObject(const std::string& name, Mesh* mesh, const float refractionIndex, const float transparancy = 0.5, const glm::vec3& intensity = glm::vec3{1.0f, 1.0f, 1.0f});
   virtual ~TransparentObject();
 
   float getRefractionIndex() const;

@@ -23,7 +23,7 @@ void Scene::complete() {
     if( object->isLight() ) {
       lightObjects_.push_back(object);
     } 
-    if( object->isTransparent() ) {
+    if( object->isTransparent() && dynamic_cast<TransparentObject*>(object)->getTransparancy() > 0.0f ) {
       transparentObjects_.push_back(object);
     } else {
       opaqueObjects_.push_back(object);

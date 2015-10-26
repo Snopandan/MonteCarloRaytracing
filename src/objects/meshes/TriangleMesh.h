@@ -18,12 +18,11 @@
 class TriangleMesh : public Mesh {
 
 public:
-  TriangleMesh(const std::vector<glm::vec3> verticies);
+  TriangleMesh(const std::vector<glm::vec3> verticies, const std::vector<glm::vec3> normals = std::vector<glm::vec3>{});
 
   virtual ~TriangleMesh() = default;
 
   std::tuple<Mesh::Intersection, float, float> getIntersections(const Ray* ray) const override;
-  std::tuple<Mesh::Intersection, glm::vec3, glm::vec3> hit(const Ray* ray) const override;
 
   glm::vec3 getNormal(const glm::vec3& position) const override;
 
@@ -35,8 +34,10 @@ private:
   }
 
   const std::vector<glm::vec3> verticies_;
+  const std::vector<glm::vec3> normals_;
+  const bool hasNormals_;
 
-  bool triangleIntersection(const Ray* ray, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3& intersection, glm::vec3& normal) const;
+  bool triangleIntersection(const Ray* ray, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, glm::vec3& intersection, glm::vec3& normal, float& t) const;
 
 };
 

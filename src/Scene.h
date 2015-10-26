@@ -12,6 +12,7 @@
 
 #include "objects/Object.h"
 #include "objects/OpaqueObject.h"
+#include "objects/TransparentObject.h"
 
 #include "utils/lightning.h"
 

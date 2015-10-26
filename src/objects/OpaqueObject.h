@@ -11,14 +11,9 @@ public:
   virtual ~OpaqueObject();
 
   float computeBrdf(const glm::vec3& position, const glm::vec2& incoming, const glm::vec2& outgoing) const { return brdf_->compute(position, incoming, outgoing); }
-  glm::vec3 getIntensity() const override { return intensity_; }
-
-  void setIntensity(const glm::vec3& intensity);
-  void addIntensity(const glm::vec3& intensity);
 
 private:
   Brdf* brdf_;
-  glm::vec3 intensity_;
 
 };
 #endif
